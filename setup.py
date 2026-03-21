@@ -8,7 +8,7 @@ Usage:
     python setup.py --quick --profile strategy --name "StratBot-1"
 """
 
-from businessclaw.setup.setup_wizard import main
+from agent.setup.setup_wizard import main
 
 if __name__ == "__main__":
     main()

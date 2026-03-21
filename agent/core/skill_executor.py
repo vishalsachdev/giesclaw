@@ -99,7 +99,7 @@ class SkillExecutor:
 
     def _execute_package(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a package-based skill by importing and calling it."""
-        module_name = f"businessclaw.skills.{skill_name.replace('-', '_')}"
+        module_name = f"agent.skills.{skill_name.replace('-', '_')}"
         try:
             mod = importlib.import_module(module_name)
             if hasattr(mod, "run"):

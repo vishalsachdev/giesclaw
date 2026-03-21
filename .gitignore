@@ -20,6 +20,15 @@ venv/
 *.tmp
 *.log
 
+# Environment
+.env
+.env.local
+.env*.local
+
+# Next.js (platform/)
+platform/.next/
+platform/node_modules/
+
 # Trash (deleted files kept for reference)
 TRASH/
 TRASH-FILES.md

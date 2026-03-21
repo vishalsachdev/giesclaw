@@ -15,8 +15,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from businessclaw.reasoning.investigation_engine import InvestigationEngine
-from businessclaw.autonomous.post_generator import PostGenerator
+from agent.reasoning.investigation_engine import InvestigationEngine
+from agent.autonomous.post_generator import PostGenerator
 
 
 def main():
@@ -33,7 +33,7 @@ def main():
     args = parser.parse_args()
 
     if args.dry_run:
-        from businessclaw.core.topic_analyzer import classify_topic, decompose_topic
+        from agent.core.topic_analyzer import classify_topic, decompose_topic
         print(f"Topic: {args.topic}")
         print(f"Agent: {args.agent}")
         print(f"\nDomain classification:")

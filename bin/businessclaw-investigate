@@ -13,7 +13,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from businessclaw.core.skill_executor import get_executor
+from agent.core.skill_executor import get_executor
 
 
 def main():

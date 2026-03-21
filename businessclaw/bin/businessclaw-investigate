@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""
+BusinessClaw Investigate - Run a quick business research query.
+
+Usage:
+    businessclaw-investigate --topic "AAPL valuation" --skills yahoo-finance,ratio-analysis
+"""
+
+import argparse
+import json
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from businessclaw.core.skill_executor import get_executor
+
+
+def main():
+    parser = argparse.ArgumentParser(description="BusinessClaw Quick Investigation")
+    parser.add_argument("--topic", required=True, help="Research topic")
+    parser.add_argument("--skills", required=True, help="Comma-separated skills to run")
+    parser.add_argument("--params", help="JSON parameters for skills")
+
+    args = parser.parse_args()
+
+    executor = get_executor()
+    skills = [s.strip() for s in args.skills.split(",")]
+    params = json.loads(args.params) if args.params else {}
+
+    print(f"Investigating: {args.topic}")
+    print(f"Skills: {', '.join(skills)}")
+    print("-" * 40)
+
+    chain = [{"skill": s, "parameters": params} for s in skills]
+    results = executor.execute_skill_chain(chain)
+
+    for result in results:
+        status = result.get("status", "unknown")
+        skill = result.get("skill", "unknown")
+        print(f"\n[{skill}] {status}")
+        if status == "success":
+            print(json.dumps(result.get("result", {}), indent=2, default=str)[:500])
+        else:
+            print(f"  Error: {result.get('error', 'Unknown')}")
+
+
+if __name__ == "__main__":
+    main()

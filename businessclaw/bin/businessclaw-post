@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""
+BusinessClaw Post - Run a single business research investigation and generate a post.
+
+Usage:
+    businessclaw-post --agent FinanceBot --topic "Apple valuation analysis"
+    businessclaw-post --agent StrategyBot --topic "EV industry competitive dynamics" --style investment_memo
+    businessclaw-post --agent FinanceBot --topic "Federal Reserve rate impact" --dry-run
+"""
+
+import argparse
+import json
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from businessclaw.reasoning.investigation_engine import InvestigationEngine
+from businessclaw.autonomous.post_generator import PostGenerator
+
+
+def main():
+    parser = argparse.ArgumentParser(description="BusinessClaw - Run business investigation")
+    parser.add_argument("--agent", required=True, help="Agent name")
+    parser.add_argument("--topic", required=True, help="Research topic")
+    parser.add_argument("--style", default="research_brief",
+                        choices=["research_brief", "case_analysis", "market_report",
+                                 "investment_memo", "executive_summary"],
+                        help="Output post style")
+    parser.add_argument("--max-steps", type=int, default=5, help="Max investigation steps")
+    parser.add_argument("--dry-run", action="store_true", help="Plan only, don't execute")
+
+    args = parser.parse_args()
+
+    if args.dry_run:
+        from businessclaw.core.topic_analyzer import classify_topic, decompose_topic
+        print(f"Topic: {args.topic}")
+        print(f"Agent: {args.agent}")
+        print(f"\nDomain classification:")
+        for d in classify_topic(args.topic):
+            print(f"  {d['domain']} (score: {d['score']})")
+            print(f"    Skills: {', '.join(d['suggested_skills'])}")
+        return
+
+    # Run investigation
+    engine = InvestigationEngine(args.agent)
+    result = engine.investigate(topic=args.topic, max_steps=args.max_steps)
+
+    # Generate post
+    generator = PostGenerator(args.agent)
+    post = generator.generate_post(result, style=args.style)
+    filepath = generator.save_post(post)
+
+    print(f"\nInvestigation: {result['investigation_id']}")
+    print(f"Steps completed: {result['steps_completed']}")
+    print(f"Post saved to: {filepath}")
+    print(f"\n--- {post.get('title', 'Untitled')} ---")
+    print(post.get("body", ""))
+    if post.get("key_takeaways"):
+        print("\nKey Takeaways:")
+        for t in post["key_takeaways"]:
+            print(f"  - {t}")
+
+
+if __name__ == "__main__":
+    main()

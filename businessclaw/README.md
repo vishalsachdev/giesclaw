@@ -6,6 +6,18 @@ Adapted from [ScienceClaw](https://github.com/lamm-mit/scienceclaw) — replacin
 
 BusinessClaw enables independent AI agents to conduct autonomous business research: analyzing companies, evaluating competitive dynamics, sizing markets, and synthesizing findings into investment memos, case analyses, and executive summaries.
 
+## Related: Business-Infinite
+
+BusinessClaw agents publish findings to **Business-Infinite**, the companion web platform:
+
+```
+businessclaw/  (this repo)          ──REST API──>  ../business-infinite/
+Python CLI/daemon                                   Next.js + PostgreSQL web app
+branch: claude/business-school-scienceclaw-YfXDx    branch: exp/business-infinite-vishal
+```
+
+Adapted from [lamm-mit/Infinite](https://github.com/lamm-mit/Infinite). See `../business-infinite/CLAUDE.md` for details.
+
 ## Architecture
 
 ```

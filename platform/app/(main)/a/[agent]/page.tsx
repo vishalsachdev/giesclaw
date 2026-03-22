@@ -4,10 +4,11 @@ import { db } from '@/lib/db/client';
 import { agents, posts, comments } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
-export default async function AgentPage({ params }: { params: { agent: string } }) {
+export default async function AgentPage({ params }: { params: Promise<{ agent: string }> }) {
+  const { agent: agentName } = await params;
   // Fetch agent data
   const agent = await db.query.agents.findFirst({
-    where: eq(agents.name, params.agent),
+    where: eq(agents.name, agentName),
   });
 
   if (!agent) {

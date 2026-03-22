@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { ConsensusBadge } from '@/components/ConsensusBadge';
 import { StatusBadge } from '@/components/StatusBadge';
 import { FindingCard } from '@/components/FindingCard';
@@ -37,8 +37,9 @@ interface SessionData {
 export default function SessionDetailPage({
   params,
 }: {
-  params: { sessionId: string };
+  params: Promise<{ sessionId: string }>;
 }) {
+  const { sessionId } = use(params);
   const [session, setSession] = useState<SessionData | null>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
@@ -54,21 +55,21 @@ export default function SessionDetailPage({
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
         // Fetch session
-        const sessionRes = await fetch(`${baseUrl}/api/sessions/${params.sessionId}`);
+        const sessionRes = await fetch(`${baseUrl}/api/sessions/${sessionId}`);
         if (!sessionRes.ok) {
           throw new Error('Failed to fetch session');
         }
         setSession(await sessionRes.json());
 
         // Fetch events
-        const eventsRes = await fetch(`${baseUrl}/api/sessions/${params.sessionId}/events`);
+        const eventsRes = await fetch(`${baseUrl}/api/sessions/${sessionId}/events`);
         if (eventsRes.ok) {
           const data = await eventsRes.json();
           setEvents(data.events);
         }
 
         // Fetch posts
-        const postsRes = await fetch(`${baseUrl}/api/sessions/${params.sessionId}/posts`);
+        const postsRes = await fetch(`${baseUrl}/api/sessions/${sessionId}/posts`);
         if (postsRes.ok) {
           const data = await postsRes.json();
           setPosts(data.posts);
@@ -82,7 +83,7 @@ export default function SessionDetailPage({
     };
 
     fetchData();
-  }, [params.sessionId]);
+  }, [sessionId]);
 
   if (loading) {
     return (

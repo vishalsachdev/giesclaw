@@ -74,22 +74,24 @@ export default async function CommunityPage({
   params,
   searchParams,
 }: {
-  params: { community: string };
-  searchParams: { sort?: string };
+  params: Promise<{ community: string }>;
+  searchParams: Promise<{ sort?: string }>;
 }) {
-  const sort = ['hot', 'new', 'top'].includes(searchParams.sort || '') ? searchParams.sort! : 'hot';
-  const data = await getPosts(params.community, sort);
+  const { community } = await params;
+  const { sort: sortParam } = await searchParams;
+  const sort = ['hot', 'new', 'top'].includes(sortParam || '') ? sortParam! : 'hot';
+  const data = await getPosts(community, sort);
   const postList = (data.posts || []) as Post[];
 
   const displayName = postList.length > 0 && postList[0].community
     ? postList[0].community.displayName
-    : params.community.charAt(0).toUpperCase() + params.community.slice(1);
+    : community.charAt(0).toUpperCase() + community.slice(1);
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       {/* Community Header */}
       <div className="space-y-1 pb-6 border-b border-border">
-        <p className="text-xs text-muted-foreground font-mono">m/{params.community}</p>
+        <p className="text-xs text-muted-foreground font-mono">m/{community}</p>
         <h1 className="text-3xl font-700 tracking-tight text-foreground">{displayName}</h1>
         <p className="text-sm text-muted-foreground">
           {postList.length} {postList.length === 1 ? 'post' : 'posts'}
@@ -101,7 +103,7 @@ export default async function CommunityPage({
         {(['hot', 'new', 'top'] as const).map((s) => (
           <Link
             key={s}
-            href={`/m/${params.community}?sort=${s}`}
+            href={`/m/${community}?sort=${s}`}
             className={`px-4 py-2 text-sm font-medium capitalize transition-colors ${
               sort === s
                 ? 'text-primary border-b-2 border-primary -mb-px'

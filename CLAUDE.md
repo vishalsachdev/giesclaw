@@ -112,11 +112,33 @@ Live at **https://giesclaw.illinihunt.org**
 - [x] ~~Email domain gate~~ — @illinois.edu validation on registration + guest submissions (server + client)
 - [x] ~~Security audit~~ — issue #4 closed, 15/19 items fixed (headers, CORS, PII, XSS, JWT)
 - [x] ~~Course simulation~~ — 15 student-agents, full pipeline, live on platform
-- [ ] Agent-to-agent debate — agents respond to [STUDENT] comments with counter-research
+- [x] ~~Platform audit + strategic options~~ — AS-IS doc, 4 options (lenses/multi-topic/primitives/builders)
+- [x] ~~Communities as analytical lenses~~ — reframed from discipline silos to analytical frames
+- [x] ~~Investigation parameter passing~~ — agents now derive params from topic via LLM
+- [x] ~~Post links (discourse graph)~~ — cite/contradict/extend/replicate UI + 8 seeded links
+- [x] ~~HeartbeatDaemon community engagement~~ — agents comment on peer posts in their community
+- [x] ~~commentType field~~ — Mission Control uses DB field instead of text tags
+- [x] ~~Agent personality~~ — synthesis/reply prompts now include role-specific traits
+- [x] ~~Homepage redesign~~ — demo-appropriate flow, mobile responsive, clear copy
+- [ ] Infrastructure primitives (Option C) — configurable templates for different use cases, path-based routing
+- [ ] Student-as-agent-builder (Option D) — agent reasoning transparency, skill forking
 - [ ] Professor dashboard — view all student posts, comment activity, per-student progress
-- [ ] Continuous Market Intelligence demo — faculty use case with auto-updating feed
+- [ ] Notifications UI — bell icon, notification page (table is populated, no UI)
+- [ ] Artifacts in HeartbeatDaemon — publish computational provenance to platform
 
 ## Session Log
+
+### 2026-03-22 (session 6)
+- **Platform audit**: Created `docs/reference/as-is-platform-audit.md` — full inventory of what works, what's stubbed, inconsistencies with ScienceClaw paper. Found 7 unused schema features, 5 naming inconsistencies, 10 paper gaps.
+- **Strategic options**: Brainstormed 4 approaches (A: lenses, B: multi-topic, C: primitives, D: student-builders). Selected A for now, C for future, D as stretch goal. Saved to `docs/reference/brainstorm-use-cases.md`.
+- **Paper reference**: Extracted and saved ScienceClaw paper summary to `docs/reference/scienceclaw-paper-summary.md`.
+- **Communities as Analytical Lenses**: Updated all 6 community descriptions in DB (e.g., "Finance Lens: What do the numbers say?"). Reframed homepage, How It Works, and stats.
+- **Investigation parameter passing (fixed)**: Added `_derive_skill_params()` — LLM extracts appropriate params (ticker, series_id, keyword) from the research topic. Skills now receive relevant context.
+- **Post links (wired up)**: Fixed GET query bug (inArray), added "Linked Research" UI on post detail pages. Seeded 8 cross-lens links (contradict/cite/extend) between student posts.
+- **4 high-impact audit fixes**: (1) Sessions API path `~/.infinite` → `~/.giesclaw`, (2) commentType DB field replaces text tags in Mission Control + daemon, (3) HeartbeatDaemon community engagement — agents comment on peer posts (2/cycle cap), (4) Agent personality in LLM prompts — analytical style, communication, frameworks from RoleManager.
+- **Homepage iterations**: Replaced Submit/Join CTAs with demo-appropriate "Explore the Research" flow. Improved copy for first-time visitors. Added "Under the Hood" section. Mobile responsive tweaks (stats, banner stats grid, lens descriptions, community headings).
+- **Next.js 16 async params fix**: Fixed 4 dynamic pages that crashed on community load.
+- All deployed to VPS and pushed to GitHub.
 
 ### 2026-03-21 (session 5)
 - **Course Research Assistant simulation**: Designed, built, and executed `bin/simulate-course.py` — full 3-phase pipeline (register → investigate → comment)

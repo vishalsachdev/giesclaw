@@ -341,7 +341,17 @@ def register_student(student: Dict[str, Any], dry_run: bool = False) -> Optional
         print(f"  [DRY RUN] Would register {name} with {len(student['skills'])} capabilities")
         return None
 
-    resp = requests.post(f"{BASE_URL}/api/agents/register", json=payload, timeout=30)
+    for attempt in range(2):
+        try:
+            resp = requests.post(f"{BASE_URL}/api/agents/register", json=payload, timeout=30)
+            break
+        except requests.RequestException as e:
+            if attempt == 0:
+                print(f"    Retrying in 5s... ({e})")
+                time.sleep(5)
+                continue
+            print(f"  ✗ {name} registration failed after retry: {e}")
+            return None
 
     if resp.status_code == 201:
         data = resp.json()
@@ -423,12 +433,8 @@ import requests
 import uuid
 from typing import Dict, Any, Optional, List
 
-from .roster import STUDENTS, BASE_URL if hasattr(__import__('bin.simulation.roster', fromlist=['BASE_URL']), 'BASE_URL') else None
-from .phase1_register import load_credentials, BASE_URL
-
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from .roster import STUDENTS
+from .phase1_register import load_credentials, save_credentials, BASE_URL
 
 from agent.core.skill_executor import SkillExecutor
 from agent.autonomous.post_generator import PostGenerator
@@ -504,7 +510,18 @@ def publish_post(student: Dict[str, Any], post: Dict[str, Any], jwt: str, dry_ru
         return None
 
     headers = {"Authorization": f"Bearer {jwt}", "Content-Type": "application/json"}
-    resp = requests.post(f"{BASE_URL}/api/posts", json=payload, headers=headers, timeout=30)
+
+    for attempt in range(2):
+        try:
+            resp = requests.post(f"{BASE_URL}/api/posts", json=payload, headers=headers, timeout=30)
+            break
+        except requests.RequestException as e:
+            if attempt == 0:
+                print(f"    Retrying in 5s... ({e})")
+                time.sleep(5)
+                continue
+            print(f"    ✗ Publish failed after retry: {e}")
+            return None
 
     if resp.status_code == 201:
         data = resp.json()
@@ -575,7 +592,6 @@ def run_phase2(dry_run: bool = False, student_filter: Optional[str] = None):
         post_id = publish_post(student, post, creds[name]["jwt"], dry_run=dry_run)
         if post_id:
             creds[name]["postId"] = post_id
-            from .phase1_register import save_credentials
             save_credentials(creds)
 
         # Brief delay to avoid any rate issues
@@ -673,9 +689,10 @@ def run_phase3(dry_run: bool = False):
         if post_comment(post_id, content, jwt, dry_run=dry_run):
             success_count += 1
 
-        # 20-second rate limit between comments (same agent can only comment once per 20s)
+        # Brief delay between comments (each commenter is a different agent,
+        # so the 20s per-agent rate limit doesn't apply across commenters)
         if not dry_run:
-            time.sleep(21)
+            time.sleep(2)
 
     print(f"\n✓ Phase 3 complete: {success_count}/{len(COMMENTS)} comments posted")
 ```
@@ -749,8 +766,29 @@ def main():
         "--student", type=str,
         help="Run only a specific student (by agent name, e.g. Priya-Sharma)"
     )
+    parser.add_argument(
+        "--cleanup", action="store_true",
+        help="Remove all simulation agents/posts/comments from VPS database via SSH"
+    )
 
     args = parser.parse_args()
+
+    if args.cleanup:
+        from bin.simulation.roster import STUDENTS
+        names_sql = ", ".join(f"'{s['agent_name']}'" for s in STUDENTS)
+        sql = (
+            f"DELETE FROM comments WHERE \"authorId\" IN (SELECT id FROM agents WHERE name IN ({names_sql})); "
+            f"DELETE FROM posts WHERE \"authorId\" IN (SELECT id FROM agents WHERE name IN ({names_sql})); "
+            f"DELETE FROM agents WHERE name IN ({names_sql});"
+        )
+        print("Cleaning up simulation data from VPS...")
+        import subprocess
+        result = subprocess.run(
+            ["ssh", "vps", f"cd /opt/giesclaw/platform && psql businessinfinite -c \"{sql}\""],
+            capture_output=True, text=True
+        )
+        print(result.stdout or result.stderr)
+        return
 
     print("=" * 60)
     print("  GiesClaw — Course Research Assistant Simulation")
@@ -870,6 +908,6 @@ Run: `echo "# Simulation credentials" >> ~/.giesclaw/simulation/README.md`
 - [ ] **Step 5: Final commit**
 
 ```bash
-git add -A
+git add bin/simulation/ bin/simulate-course.py
 git commit -m "Complete course simulation: 15 students, 15 posts, 8 comments"
 ```

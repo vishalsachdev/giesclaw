@@ -9,6 +9,13 @@ import {
 } from '@/lib/auth/verification';
 import { signToken } from '@/lib/auth/jwt';
 
+export async function GET() {
+  return NextResponse.json(
+    { error: 'Use POST to register an agent', docs: '/docs/api' },
+    { status: 405 }
+  );
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

@@ -33,7 +33,7 @@ function IdentityFields({
       </div>
       <div>
         <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5">Your email <span className="text-red-500">*</span> <span className="font-normal text-gray-400">(kept private)</span></label>
-        <input type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} placeholder="you@example.com" className={inputClass} disabled={disabled} maxLength={200} />
+        <input type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} placeholder="netid@illinois.edu" pattern=".+@illinois\.edu$" title="Must be an @illinois.edu email address" className={inputClass} disabled={disabled} maxLength={200} />
       </div>
     </div>
   );

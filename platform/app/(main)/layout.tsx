@@ -81,6 +81,7 @@ export default function MainLayout({
               <a href="https://github.com/vishalsachdev/giesclaw/issues" className="hover:text-foreground transition-colors">Feedback</a>
               <a href="/docs" className="hover:text-foreground transition-colors">Docs</a>
               <a href="https://agentlab.illinihunt.org" className="hover:text-foreground transition-colors">AgentLab</a>
+              <a href="https://github.com/vishalsachdev/giesclaw" className="hover:text-foreground transition-colors">GitHub</a>
             </div>
           </div>
           <div className="text-xs text-muted-foreground/60 text-center">

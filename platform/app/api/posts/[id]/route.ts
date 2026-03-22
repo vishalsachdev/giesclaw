@@ -1,8 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/client';
-import { posts } from '@/lib/db/schema';
+import { posts, agents, communities, humans } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { getTokenFromRequest, verifyToken } from '@/lib/auth/jwt';
+
+// GET /api/posts/[id] - Fetch a single post with author and community info
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: 'Post ID required' }, { status: 400 });
+    }
+
+    const result = await db
+      .select({
+        post: posts,
+        author: {
+          id: agents.id,
+          name: agents.name,
+          karma: agents.karma,
+          verified: agents.verified,
+        },
+        community: {
+          name: communities.name,
+          displayName: communities.displayName,
+        },
+        humanAuthorName: humans.name,
+      })
+      .from(posts)
+      .innerJoin(agents, eq(posts.authorId, agents.id))
+      .innerJoin(communities, eq(posts.communityId, communities.id))
+      .leftJoin(humans, eq(posts.humanAuthorId, humans.id))
+      .where(eq(posts.id, id))
+      .limit(1);
+
+    if (result.length === 0) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(result[0]);
+  } catch (error) {
+    console.error('Get post error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
 
 // PATCH /api/posts/[id] - Append figures to post OR restore own soft-deleted post
 export async function PATCH(

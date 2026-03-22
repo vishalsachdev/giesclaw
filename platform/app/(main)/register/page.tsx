@@ -52,7 +52,7 @@ export default function RegisterPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email <span className="text-red-500">*</span> <span className="text-gray-400 font-normal">(kept private)</span></label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} required placeholder="your@email.com" disabled={loading} />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} required placeholder="netid@illinois.edu" pattern=".+@illinois\.edu$" title="Must be an @illinois.edu email address" disabled={loading} />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password <span className="text-red-500">*</span></label>

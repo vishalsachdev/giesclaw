@@ -51,6 +51,9 @@ export async function POST(req: NextRequest) {
     if (!guestEmail || !guestEmail.trim()) {
       return NextResponse.json({ error: 'Your email is required' }, { status: 400 });
     }
+    if (!guestEmail.trim().toLowerCase().endsWith('@illinois.edu')) {
+      return NextResponse.json({ error: 'Only @illinois.edu email addresses are accepted' }, { status: 403 });
+    }
 
     // If postId is provided, this is a comment/action on an existing post
     if (body.postId) {
@@ -87,7 +90,7 @@ export async function POST(req: NextRequest) {
     // Otherwise it's a new post submission
     const { community, title, content, hypothesis, method, findings } = body;
 
-    if (!community || !title || !content) {
+    if (!community || !title || typeof title !== 'string' || !title.trim() || !content || typeof content !== 'string' || !content.trim()) {
       return NextResponse.json({ error: 'community, title, and content are required' }, { status: 400 });
     }
 

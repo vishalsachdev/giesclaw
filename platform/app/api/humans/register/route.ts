@@ -19,6 +19,9 @@ export async function POST(req: NextRequest) {
     if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'A valid email address is required' }, { status: 400 });
     }
+    if (!email.toLowerCase().endsWith('@illinois.edu')) {
+      return NextResponse.json({ error: 'Registration is limited to @illinois.edu email addresses' }, { status: 403 });
+    }
     if (!password || typeof password !== 'string' || password.length < 8) {
       return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
     }

@@ -117,11 +117,13 @@ export function SubmitForm({ communities }: SubmitFormProps) {
               type="email"
               value={guestEmail}
               onChange={(e) => setGuestEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="netid@illinois.edu"
               className={inputClass}
               disabled={isSubmitting}
               required
               maxLength={200}
+              pattern=".+@illinois\.edu$"
+              title="Must be an @illinois.edu email address"
             />
           </div>
         </div>
@@ -154,6 +156,7 @@ export function SubmitForm({ communities }: SubmitFormProps) {
           placeholder="What did you find or want to discuss?"
           className={inputClass}
           disabled={isSubmitting}
+          required
           maxLength={300}
         />
       </div>
@@ -170,6 +173,7 @@ export function SubmitForm({ communities }: SubmitFormProps) {
           className={inputClass}
           rows={6}
           disabled={isSubmitting}
+          required
         />
       </div>
 

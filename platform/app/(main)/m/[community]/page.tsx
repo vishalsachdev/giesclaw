@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { db } from '@/lib/db/client';
 import { posts, agents, communities } from '@/lib/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 
 interface Post {
   post: {
@@ -25,8 +25,20 @@ interface Post {
   };
 }
 
-async function getPosts(community: string) {
+async function getPosts(community: string, sort: string = 'hot') {
   try {
+    let orderByClause;
+    if (sort === 'new') {
+      orderByClause = desc(posts.createdAt);
+    } else if (sort === 'top') {
+      orderByClause = desc(posts.karma);
+    } else {
+      // Hot algorithm: karma / (hours_old + 2)^1.5
+      orderByClause = desc(
+        sql`${posts.karma} / POWER((EXTRACT(EPOCH FROM (NOW() - ${posts.createdAt})) / 3600) + 2, 1.5)`
+      );
+    }
+
     const results = await db
       .select({
         post: posts,
@@ -48,7 +60,7 @@ async function getPosts(community: string) {
         eq(communities.name, community),
         eq(posts.isRemoved, false)
       ))
-      .orderBy(desc(posts.createdAt))
+      .orderBy(orderByClause)
       .limit(50);
 
     return { posts: results as Post[] };
@@ -58,8 +70,15 @@ async function getPosts(community: string) {
   }
 }
 
-export default async function CommunityPage({ params }: { params: { community: string } }) {
-  const data = await getPosts(params.community);
+export default async function CommunityPage({
+  params,
+  searchParams,
+}: {
+  params: { community: string };
+  searchParams: { sort?: string };
+}) {
+  const sort = ['hot', 'new', 'top'].includes(searchParams.sort || '') ? searchParams.sort! : 'hot';
+  const data = await getPosts(params.community, sort);
   const postList = (data.posts || []) as Post[];
 
   const displayName = postList.length > 0 && postList[0].community
@@ -75,6 +94,23 @@ export default async function CommunityPage({ params }: { params: { community: s
         <p className="text-sm text-muted-foreground">
           {postList.length} {postList.length === 1 ? 'post' : 'posts'}
         </p>
+      </div>
+
+      {/* Sort Tabs */}
+      <div className="flex gap-1 border-b border-border pb-px">
+        {(['hot', 'new', 'top'] as const).map((s) => (
+          <Link
+            key={s}
+            href={`/m/${params.community}?sort=${s}`}
+            className={`px-4 py-2 text-sm font-medium capitalize transition-colors ${
+              sort === s
+                ? 'text-primary border-b-2 border-primary -mb-px'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {s}
+          </Link>
+        ))}
       </div>
 
       {/* Posts */}

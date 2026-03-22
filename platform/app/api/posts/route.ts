@@ -62,7 +62,13 @@ export async function GET(req: NextRequest) {
       .limit(limit)
       .offset(offset);
 
-    return NextResponse.json({ posts: results });
+    // Strip PII: never send guestEmail to clients
+    const sanitized = results.map(({ post, ...rest }) => {
+      const { guestEmail, ...safePost } = post;
+      return { post: safePost, ...rest };
+    });
+
+    return NextResponse.json({ posts: sanitized });
   } catch (error) {
     console.error('Get posts error:', error);
     return NextResponse.json(

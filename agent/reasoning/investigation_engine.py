@@ -89,13 +89,14 @@ class InvestigationEngine:
                 )
                 self.tracker.investigations[inv_id]["hypothesis"] = hypothesis
 
-        # 4. Execute skills
+        # 4. Execute skills with topic-derived parameters
         findings = []
         for i, skill_name in enumerate(suggested_skills[:max_steps]):
             if skill_name not in [s for s in self.registry.list_all()]:
                 continue
 
-            result = self.executor.execute_skill(skill_name)
+            params = self._derive_skill_params(skill_name, topic, hypothesis)
+            result = self.executor.execute_skill(skill_name, parameters=params)
 
             if result["status"] == "success":
                 # Create artifact
@@ -120,7 +121,7 @@ class InvestigationEngine:
                 self.journal.log_analysis(
                     description=finding,
                     tool=skill_name,
-                    parameters={},
+                    parameters=params,
                     results={**result["result"], "_artifact_id": artifact.artifact_id},
                 )
 
@@ -159,6 +160,54 @@ class InvestigationEngine:
             "gaps": gaps.get("gaps", []),
             "conclusion": conclusion,
         }
+
+    def _derive_skill_params(
+        self, skill_name: str, topic: str, hypothesis: Optional[str]
+    ) -> Dict[str, Any]:
+        """Use LLM to derive appropriate parameters for a skill given the research topic."""
+        # Skills that need specific parameters derived from the topic
+        param_hints = {
+            "yahoo-finance": "ticker (stock symbol, e.g. AAPL), period (1d/1mo/1y/max)",
+            "sec-edgar": "ticker (stock symbol), filing_type (10-K/10-Q/8-K)",
+            "fred-data": "series_id (FRED series like UNRATE, GDP, CPIAUCSL)",
+            "google-trends": "keyword (search term to analyze trends for)",
+            "world-bank": "indicator (e.g. NY.GDP.MKTP.CD, SL.UEM.TOTL.ZS), country (ISO code like US, DE)",
+            "news-search": "query (search query for recent news)",
+            "sentiment-analysis": "query (text or topic to analyze sentiment for)",
+            "market-sizing": "market (description of the market to size)",
+            "business-model-canvas": "company (company or business model to analyze)",
+            "competitor-intel": "company (company name), sector (industry sector)",
+            "porter-five-forces": "industry (industry to analyze)",
+            "case-study-search": "query (case study topic to search for)",
+            "financial-statement-analysis": "ticker (stock symbol to analyze)",
+        }
+
+        hint = param_hints.get(skill_name, "")
+        if not hint:
+            return {"query": topic}
+
+        client = get_llm_client(self.agent_name)
+        prompt = f"""Given this research topic, provide the best parameters for the {skill_name} skill.
+
+Topic: {topic}
+{"Hypothesis: " + hypothesis if hypothesis else ""}
+
+The skill accepts these parameters: {hint}
+
+Respond with ONLY a JSON object of parameter key-value pairs. No explanation.
+Example: {{"ticker": "AAPL", "period": "1y"}}"""
+
+        response = client.call(prompt, max_tokens=100, temperature=0.1)
+        try:
+            import re
+            json_match = re.search(r"\{.*\}", response, re.DOTALL)
+            if json_match:
+                return json.loads(json_match.group())
+        except Exception:
+            pass
+
+        # Fallback: pass the topic as a generic query
+        return {"query": topic}
 
     def _synthesize_conclusion(
         self, topic: str, hypothesis: Optional[str], findings: List[Dict[str, Any]]

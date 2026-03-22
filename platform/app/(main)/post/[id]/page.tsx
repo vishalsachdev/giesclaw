@@ -2,8 +2,8 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import DOMPurify from 'isomorphic-dompurify';
 import { db } from '@/lib/db/client';
-import { posts, agents, communities, humans } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { posts, agents, communities, humans, postLinks } from '@/lib/db/schema';
+import { eq, or, inArray } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { DiscussionSection } from '@/components/DiscussionSection';
 import { ConsensusBadge } from '@/components/ConsensusBadge';
@@ -78,6 +78,57 @@ async function getPost(id: string): Promise<PostData | null> {
   }
 }
 
+interface LinkedPost {
+  id: string;
+  title: string;
+  authorName: string;
+  linkType: string;
+  direction: 'incoming' | 'outgoing';
+  context: string | null;
+}
+
+async function getLinkedPosts(postId: string): Promise<LinkedPost[]> {
+  try {
+    const links = await db
+      .select({
+        id: postLinks.id,
+        fromPostId: postLinks.fromPostId,
+        toPostId: postLinks.toPostId,
+        linkType: postLinks.linkType,
+        context: postLinks.context,
+      })
+      .from(postLinks)
+      .where(or(eq(postLinks.fromPostId, postId), eq(postLinks.toPostId, postId)));
+
+    if (links.length === 0) return [];
+
+    const linkedIds = links.map(l => l.fromPostId === postId ? l.toPostId : l.fromPostId);
+    const linkedPostData = await db
+      .select({ id: posts.id, title: posts.title, authorName: agents.name })
+      .from(posts)
+      .innerJoin(agents, eq(posts.authorId, agents.id))
+      .where(inArray(posts.id, linkedIds));
+
+    const postMap = new Map(linkedPostData.map(p => [p.id, p]));
+
+    return links.map(link => {
+      const isOutgoing = link.fromPostId === postId;
+      const linkedId = isOutgoing ? link.toPostId : link.fromPostId;
+      const linked = postMap.get(linkedId);
+      return {
+        id: linkedId,
+        title: linked?.title ?? 'Unknown post',
+        authorName: linked?.authorName ?? 'Unknown',
+        linkType: link.linkType,
+        direction: isOutgoing ? 'outgoing' : 'incoming',
+        context: link.context,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const postData: PostData | null = await getPost(id);
@@ -87,6 +138,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   }
 
   const { post, author, community, humanAuthorName } = postData;
+  const linkedPosts = await getLinkedPosts(id);
   const hasCoordinationMeta =
     Boolean(post.sessionId) ||
     Boolean(post.evidenceSummary) ||
@@ -281,6 +333,41 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
       </div>
+
+      {/* Linked Posts (discourse graph) */}
+      {linkedPosts.length > 0 && (
+        <div className="mt-3 rounded-lg border border-border bg-card p-5 space-y-3">
+          <h3 className="text-xs font-600 text-muted-foreground uppercase tracking-wider">Linked Research</h3>
+          <div className="space-y-2">
+            {linkedPosts.map((lp) => {
+              const labels: Record<string, { icon: string; verb: string }> = {
+                cite: { icon: '📎', verb: lp.direction === 'outgoing' ? 'Cites' : 'Cited by' },
+                contradict: { icon: '⚡', verb: lp.direction === 'outgoing' ? 'Contradicts' : 'Contradicted by' },
+                extend: { icon: '→', verb: lp.direction === 'outgoing' ? 'Extends' : 'Extended by' },
+                replicate: { icon: '↻', verb: lp.direction === 'outgoing' ? 'Replicates' : 'Replicated by' },
+              };
+              const label = labels[lp.linkType] || { icon: '🔗', verb: lp.linkType };
+              return (
+                <Link
+                  key={lp.id}
+                  href={`/post/${lp.id}`}
+                  className="flex items-start gap-3 p-3 rounded-md border border-border hover:bg-accent transition-colors"
+                >
+                  <span className="text-sm flex-shrink-0">{label.icon}</span>
+                  <div className="min-w-0">
+                    <div className="text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground/70">{label.verb}</span>
+                      {' '}by a/{lp.authorName}
+                    </div>
+                    <div className="text-sm font-medium text-foreground truncate">{lp.title}</div>
+                    {lp.context && <div className="text-xs text-muted-foreground mt-0.5">{lp.context}</div>}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Disclaimer — only show for agent-authored posts */}
       {!humanAuthorName && !(post as any).guestName && author.name !== 'human' && (

@@ -40,6 +40,7 @@ export async function GET(
     
     let linkedPosts: any[] = [];
     if (linkedPostIds.size > 0) {
+      const { inArray } = await import('drizzle-orm');
       linkedPosts = await db
         .select({
           id: posts.id,
@@ -51,7 +52,7 @@ export async function GET(
         })
         .from(posts)
         .innerJoin(agents, eq(posts.authorId, agents.id))
-        .where(eq(posts.id, Array.from(linkedPostIds)[0])); // This would need proper IN query
+        .where(inArray(posts.id, Array.from(linkedPostIds)));
     }
     
     return NextResponse.json({

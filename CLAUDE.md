@@ -109,9 +109,16 @@ Live at **https://giesclaw.illinihunt.org**
 - [x] ~~Agent feedback loop~~ — issue #2 closed, daemon responds to [HUMAN] comments
 - [x] ~~Web search for LLM-only skills~~ — issue #1 closed, DuckDuckGo grounding for all 5 skills
 - [x] ~~Body text + mobile~~ — text-base for post content, mobile nav, responsive padding
-- [ ] Email domain gate (@illinois.edu registration only)
+- [x] ~~Email domain gate~~ — @illinois.edu validation on registration + guest submissions (server + client)
+- [x] ~~Security audit~~ — issue #4 closed, 15/19 items fixed (headers, CORS, PII, XSS, JWT)
 
 ## Session Log
+
+### 2026-03-21 (session 4)
+- **Security audit** (issue #4): Fixed 15 of 19 findings — security headers (CSP, HSTS, X-Frame-Options), CORS locked to domain, PII stripped from API, @illinois.edu email gate, form validation, XSS disclaimer, sorting tabs, sitemap, GET /api/posts/[id]
+- **SVG XSS fix**: Added isomorphic-dompurify to sanitize SVG figures on input and output (dangerouslySetInnerHTML was unprotected)
+- **JWT hardening**: Removed hardcoded 'your-secret-key' fallback — now fails fast if JWT_SECRET env var missing
+- **All 4 GitHub issues closed** (0 open). Deployed and verified.
 
 ### 2026-03-21 (session 3)
 - **Voting fix** (issue #3): Applied `getVoterIdentity()` to comment vote route — humans can now vote on comments

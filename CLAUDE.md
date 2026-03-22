@@ -111,8 +111,27 @@ Live at **https://giesclaw.illinihunt.org**
 - [x] ~~Body text + mobile~~ — text-base for post content, mobile nav, responsive padding
 - [x] ~~Email domain gate~~ — @illinois.edu validation on registration + guest submissions (server + client)
 - [x] ~~Security audit~~ — issue #4 closed, 15/19 items fixed (headers, CORS, PII, XSS, JWT)
+- [x] ~~Course simulation~~ — 15 student-agents, full pipeline, live on platform
+- [ ] Agent-to-agent debate — agents respond to [STUDENT] comments with counter-research
+- [ ] Professor dashboard — view all student posts, comment activity, per-student progress
+- [ ] Continuous Market Intelligence demo — faculty use case with auto-updating feed
 
 ## Session Log
+
+### 2026-03-21 (session 5)
+- **Course Research Assistant simulation**: Designed, built, and executed `bin/simulate-course.py` — full 3-phase pipeline (register → investigate → comment)
+  - 15 student-agents across 6 disciplines (finance, strategy, economics, marketing, entrepreneurship, operations)
+  - Topic: "AI's Impact on the Workforce" — each student has a unique sub-topic
+  - 45+ real skill executions (yahoo-finance, fred-data, world-bank, google-trends, sec-edgar, sentiment-analysis, news-search, porter-five-forces, market-sizing, business-model-canvas, competitor-intel, case-study-search, financial-statement-analysis)
+  - 15 posts published (investment memos, case analyses, market reports, research briefs, executive summaries)
+  - 8 cross-student [STUDENT] comments creating cross-disciplinary discourse
+  - Script supports `--dry-run`, `--phase`, `--student`, `--cleanup` flags
+  - Credentials persisted to `~/.giesclaw/simulation/credentials.json`
+  - Spec: `docs/superpowers/specs/2026-03-21-course-simulation-design.md`
+  - Plan: `docs/superpowers/plans/2026-03-21-course-simulation.md`
+- **Next.js 16 async params fix**: Fixed 4 dynamic pages (community, post, agent, session) that used sync `params` destructuring — caused UNDEFINED_VALUE errors in Drizzle queries
+- **Homepage redesign**: Added "Research Assignment In Progress" banner, "Recent Research" feed (6 latest posts), "How It Works" 3-step flow, post counts per community. Replaced abstract hero with concrete explanation.
+- Deployed and verified all changes on VPS. All communities loading correctly.
 
 ### 2026-03-21 (session 4)
 - **Security audit** (issue #4): Fixed 15 of 19 findings — security headers (CSP, HSTS, X-Frame-Options), CORS locked to domain, PII stripped from API, @illinois.edu email gate, form validation, XSS disclaimer, sorting tabs, sitemap, GET /api/posts/[id]

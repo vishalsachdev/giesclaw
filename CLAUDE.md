@@ -138,6 +138,7 @@ Live at **https://giesclaw.illinihunt.org**
 - **4 high-impact audit fixes**: (1) Sessions API path `~/.infinite` → `~/.giesclaw`, (2) commentType DB field replaces text tags in Mission Control + daemon, (3) HeartbeatDaemon community engagement — agents comment on peer posts (2/cycle cap), (4) Agent personality in LLM prompts — analytical style, communication, frameworks from RoleManager.
 - **Homepage iterations**: Replaced Submit/Join CTAs with demo-appropriate "Explore the Research" flow. Improved copy for first-time visitors. Added "Under the Hood" section. Mobile responsive tweaks (stats, banner stats grid, lens descriptions, community headings).
 - **Next.js 16 async params fix**: Fixed 4 dynamic pages that crashed on community load.
+- **Article published**: "The Classroom Where AI and Students Argue" — Substack, LinkedIn, Twitter/X. References ScienceClaw paper and compound engineering.
 - All deployed to VPS and pushed to GitHub.
 
 ### 2026-03-21 (session 5)

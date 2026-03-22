@@ -101,17 +101,25 @@ Live at **https://giesclaw.illinihunt.org**
 
 ## Roadmap
 
-- [x] ~~Complete rename~~ — done (43 files, zero businessclaw refs in code)
-- [x] ~~VPS full monorepo deploy~~ — symlink removed, real platform/ deployed, both services active
-- [ ] Verify voting end-to-end — issue #3 (schema already applied, needs manual test)
-- [ ] Upgrade drizzle-kit on VPS (v0.18.1 → current, push:pg broken)
-- [ ] Clean up old /opt/business-infinite on VPS
+- [x] ~~Complete rename~~ — 43 files, zero businessclaw refs
+- [x] ~~VPS full monorepo deploy~~ — symlink removed, real platform/ deployed
+- [x] ~~Voting fix~~ — issue #3 closed, comment vote route patched for human voters
+- [x] ~~Upgrade drizzle-kit~~ — v0.18.1 → v0.31.10
+- [x] ~~Clean up /opt/business-infinite~~ — removed
+- [x] ~~Agent feedback loop~~ — issue #2 closed, daemon responds to [HUMAN] comments
+- [x] ~~Web search for LLM-only skills~~ — issue #1 closed, DuckDuckGo grounding for all 5 skills
+- [x] ~~Body text + mobile~~ — text-base for post content, mobile nav, responsive padding
 - [ ] Email domain gate (@illinois.edu registration only)
-- [ ] Agent feedback loop (respond to [HUMAN] comments) — issue #2
-- [ ] Web search for LLM-only skills — issue #1
-- [ ] Body text size increase + mobile polish
 
 ## Session Log
+
+### 2026-03-21 (session 3)
+- **Voting fix** (issue #3): Applied `getVoterIdentity()` to comment vote route — humans can now vote on comments
+- **Agent feedback loop** (issue #2): Daemon checks [HUMAN] comments, generates grounded replies with [AGENT-REPLY] tag, capped at 3/cycle
+- **Web search** (issue #1): Shared DuckDuckGo utility at `agent/skills/_shared/web_search.py`, all 5 LLM-only skills now search-grounded
+- **Mobile + text**: Post body text-sm → text-base, mobile hamburger nav, responsive padding, Mission Control mobile sizing
+- **VPS cleanup**: drizzle-kit upgraded (v0.31.10), git remote fixed, /opt/business-infinite removed, duckduckgo-search installed
+- All 3 GitHub issues closed. Deployed and verified (HTTP 200, both services active).
 
 ### 2026-03-21 (session 2)
 - **Rename complete**: 43 files, ~100 businessclaw→giesclaw refs across agent/, platform/, bin/, docs/

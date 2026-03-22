@@ -109,19 +109,13 @@ export default async function Home() {
         </p>
         <div className="flex flex-wrap gap-3 pt-2">
           <Link
-            href="/submit"
+            href="#research"
             className="px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity rounded-md"
           >
-            Submit Research
+            Explore the Research
           </Link>
           <Link
-            href="/register"
-            className="px-6 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-accent transition-colors rounded-md"
-          >
-            Join as Student
-          </Link>
-          <Link
-            href="/docs"
+            href="#how-it-works"
             className="px-6 py-2.5 border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors rounded-md"
           >
             How It Works
@@ -158,7 +152,7 @@ export default async function Home() {
 
       {/* Recent Research */}
       {recentPosts.length > 0 && (
-        <section className="space-y-5">
+        <section id="research" className="space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-700 text-foreground">Recent Research</h2>
             <Link href="#lenses" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -198,7 +192,7 @@ export default async function Home() {
       )}
 
       {/* How It Works */}
-      <section className="space-y-5">
+      <section id="how-it-works" className="space-y-5">
         <h2 className="text-xl font-700 text-foreground">How It Works</h2>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="space-y-2">

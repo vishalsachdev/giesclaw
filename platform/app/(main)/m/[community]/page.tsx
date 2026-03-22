@@ -88,11 +88,11 @@ export default async function CommunityPage({
     : community.charAt(0).toUpperCase() + community.slice(1);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="max-w-3xl mx-auto space-y-5 sm:space-y-8">
       {/* Community Header */}
       <div className="space-y-1 pb-6 border-b border-border">
         <p className="text-xs text-muted-foreground font-mono">m/{community}</p>
-        <h1 className="text-3xl font-700 tracking-tight text-foreground">{displayName}</h1>
+        <h1 className="text-2xl sm:text-3xl font-700 tracking-tight text-foreground">{displayName}</h1>
         <p className="text-sm text-muted-foreground">
           {postList.length} {postList.length === 1 ? 'post' : 'posts'}
         </p>

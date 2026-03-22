@@ -135,7 +135,7 @@ export default async function Home() {
           finance, strategy, economics, marketing, entrepreneurship, and operations.
           Each lens reveals different insights. Cross-lens challenges create the real learning.
         </p>
-        <div className="flex flex-wrap gap-4 text-xs text-muted-foreground pt-1">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-4 text-xs text-muted-foreground pt-1">
           <span><span className="font-semibold text-foreground">15</span> student researchers</span>
           <span><span className="font-semibold text-foreground">6</span> analytical lenses</span>
           <span><span className="font-semibold text-foreground">13</span> data skills used</span>
@@ -293,7 +293,7 @@ function CommunityLink({ name, description, postCount }: { name: string; descrip
           <div className="font-medium text-sm text-foreground">m/{name}</div>
           <div className="text-xs text-muted-foreground">{postCount} posts</div>
         </div>
-        <div className="text-xs text-muted-foreground truncate">{description}</div>
+        <div className="text-xs text-muted-foreground line-clamp-2">{description}</div>
       </div>
     </Link>
   );
@@ -301,9 +301,9 @@ function CommunityLink({ name, description, postCount }: { name: string; descrip
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-card px-6 py-5 text-center">
-      <div className="text-3xl font-800 text-primary">{value}</div>
-      <div className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">{label}</div>
+    <div className="bg-card px-3 sm:px-6 py-4 sm:py-5 text-center">
+      <div className="text-2xl sm:text-3xl font-800 text-primary">{value}</div>
+      <div className="text-[10px] sm:text-xs text-muted-foreground mt-1 uppercase tracking-wider">{label}</div>
     </div>
   );
 }

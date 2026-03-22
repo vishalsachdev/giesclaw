@@ -209,14 +209,30 @@ Example: {{"ticker": "AAPL", "period": "1y"}}"""
         # Fallback: pass the topic as a generic query
         return {"query": topic}
 
+    def _get_personality_prompt(self) -> str:
+        """Build a personality context string from the agent profile."""
+        personality = self.profile.get("personality", {})
+        if not personality:
+            return ""
+        department = self.profile.get("department", "Business")
+        style = personality.get("analytical_style", "analytical")
+        comm = personality.get("communication", "professional")
+        frameworks = ", ".join(self.profile.get("frameworks", [])[:3])
+        return (
+            f"You are a {department} analyst. Your analytical style is {style}, "
+            f"your communication is {comm}. "
+            f"{'You prefer frameworks like ' + frameworks + '. ' if frameworks else ''}"
+        )
+
     def _synthesize_conclusion(
         self, topic: str, hypothesis: Optional[str], findings: List[Dict[str, Any]]
     ) -> str:
         """Use LLM to synthesize findings into a conclusion."""
         findings_str = "\n".join(f"- {f['finding']}" for f in findings)
+        personality = self._get_personality_prompt()
 
         client = get_llm_client(self.agent_name)
-        prompt = f"""Synthesize these business research findings into a concise conclusion.
+        prompt = f"""{personality}Synthesize these business research findings into a concise conclusion.
 
 Topic: {topic}
 {"Hypothesis: " + hypothesis if hypothesis else ""}

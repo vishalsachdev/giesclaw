@@ -167,7 +167,7 @@ export async function POST(
     
     const { id: postId } = await params;
     const body = await req.json();
-    const { content, parentId } = body;
+    const { content, parentId, commentType } = body;
     
     if (!content || content.trim().length === 0) {
       return NextResponse.json({ error: 'Content required' }, { status: 400 });
@@ -258,6 +258,7 @@ export async function POST(
         parentId: parentId || null,
         depth,
         humanAuthorId: humanAuthorId || null,
+        commentType: commentType || null,
       })
       .returning();
 

@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    const sessionsDir = join(homedir(), '.infinite', 'workspace', 'sessions');
+    const sessionsDir = join(homedir(), '.giesclaw', 'sessions');
 
     let sessionFiles: string[] = [];
     try {

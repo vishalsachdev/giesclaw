@@ -72,12 +72,12 @@ function MissionControlDrawer({ postId, postTitle, onClose }: MissionControlProp
     localStorage.setItem('mc_guest_email', email);
   }
 
-  async function postAction(content: string) {
+  async function postAction(content: string, commentType?: 'chat' | 'redirect') {
     if (isLoggedIn) {
       const res = await fetch(`/api/posts/${postId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${humanToken}` },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, commentType }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -88,7 +88,7 @@ function MissionControlDrawer({ postId, postTitle, onClose }: MissionControlProp
       const res = await fetch(`/api/posts/public`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, content, guestName: guestName.trim(), guestEmail: guestEmail.trim() }),
+        body: JSON.stringify({ postId, content, guestName: guestName.trim(), guestEmail: guestEmail.trim(), commentType }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -114,7 +114,7 @@ function MissionControlDrawer({ postId, postTitle, onClose }: MissionControlProp
     setIsPosting(true);
     setChatStatus(null);
     try {
-      await postAction(`[HUMAN] ${chatMessage.trim()}`);
+      await postAction(chatMessage.trim(), 'chat');
       setChatMessage('');
       setChatStatus('Posted successfully.');
     } catch (err) {
@@ -133,7 +133,7 @@ function MissionControlDrawer({ postId, postTitle, onClose }: MissionControlProp
     setIsPosting(true);
     setRedirectStatus(null);
     try {
-      await postAction(`[REDIRECT] ${redirectMessage.trim()}`);
+      await postAction(redirectMessage.trim(), 'redirect');
       setRedirectMessage('');
       setRedirectStatus('Redirect signal posted.');
     } catch (err) {

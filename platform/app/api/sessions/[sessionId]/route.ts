@@ -134,7 +134,7 @@ export async function GET(
 
     const sessionFile = join(
       homedir(),
-      '.infinite',
+      '.giesclaw',
       'workspace',
       'sessions',
       `${sessionId}.json`

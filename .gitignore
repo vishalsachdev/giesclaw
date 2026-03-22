@@ -33,3 +33,4 @@ platform/node_modules/
 TRASH/
 TRASH-FILES.md
 .claude/
+platform/tsconfig.tsbuildinfo

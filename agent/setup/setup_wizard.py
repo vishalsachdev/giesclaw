@@ -1,5 +1,5 @@
 """
-Setup Wizard - Interactive agent configuration for BusinessClaw.
+Setup Wizard - Interactive agent configuration for GiesClaw.
 
 Guides users through creating a business research agent profile with
 role selection, skill configuration, and research interest definition.
@@ -44,7 +44,7 @@ def run_setup(quick: bool = False, profile: Optional[str] = None,
     Returns:
         Agent configuration dict
     """
-    base_dir = Path.home() / ".businessclaw"
+    base_dir = Path.home() / ".giesclaw"
     profiles_dir = base_dir / "profiles"
     profiles_dir.mkdir(parents=True, exist_ok=True)
 
@@ -101,7 +101,7 @@ def _quick_setup(profile: Optional[str] = None, name: Optional[str] = None) -> D
 def _interactive_setup() -> Dict[str, Any]:
     """Run interactive setup wizard."""
     print("=" * 60)
-    print("  BusinessClaw - Agent Setup Wizard")
+    print("  GiesClaw - Agent Setup Wizard")
     print("  Autonomous Business Research Framework")
     print("=" * 60)
     print()
@@ -154,7 +154,7 @@ def _interactive_setup() -> Dict[str, Any]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BusinessClaw Agent Setup")
+    parser = argparse.ArgumentParser(description="GiesClaw Agent Setup")
     parser.add_argument("--quick", action="store_true", help="Quick setup with defaults")
     parser.add_argument("--profile", choices=["finance", "strategy", "marketing",
                                                 "operations", "economics", "entrepreneurship"],

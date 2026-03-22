@@ -58,7 +58,7 @@ Respond in JSON format:
     "strategic_implications": ["...", "...", "..."]
 }}"""
 
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
     response = client.call(prompt, max_tokens=1200, temperature=0.3)
 
     try:

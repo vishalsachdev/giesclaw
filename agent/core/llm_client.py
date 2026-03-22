@@ -45,7 +45,7 @@ class LLMClient:
         timeout_env = os.environ.get("LLM_TIMEOUT")
         self.timeout = int(timeout_env) if timeout_env else 180
 
-        config_file = Path.home() / ".businessclaw" / "llm_config.json"
+        config_file = Path.home() / ".giesclaw" / "llm_config.json"
         if config_file.exists():
             try:
                 with open(config_file) as f:

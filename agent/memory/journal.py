@@ -7,7 +7,7 @@ Stores chronological records of:
 - Analyses (tool executions and parameters)
 - Conclusions (findings and strategic recommendations)
 
-File format: ~/.businessclaw/journals/{agent_name}/journal.jsonl
+File format: ~/.giesclaw/journals/{agent_name}/journal.jsonl
 """
 
 import json
@@ -24,7 +24,7 @@ class AgentJournal:
     def __init__(self, agent_name: str, base_dir: Optional[str] = None):
         self.agent_name = agent_name
         if base_dir is None:
-            base_dir = os.path.expanduser("~/.businessclaw/journals")
+            base_dir = os.path.expanduser("~/.giesclaw/journals")
         self.journal_dir = Path(base_dir) / agent_name
         self.journal_dir.mkdir(parents=True, exist_ok=True)
         self.journal_path = self.journal_dir / "journal.jsonl"

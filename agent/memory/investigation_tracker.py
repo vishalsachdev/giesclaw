@@ -19,7 +19,7 @@ class InvestigationTracker:
     def __init__(self, agent_name: str, base_dir: Optional[str] = None):
         self.agent_name = agent_name
         if base_dir is None:
-            base_dir = os.path.expanduser("~/.businessclaw/investigations")
+            base_dir = os.path.expanduser("~/.giesclaw/investigations")
         self.tracker_dir = Path(base_dir) / agent_name
         self.tracker_dir.mkdir(parents=True, exist_ok=True)
         self.tracker_path = self.tracker_dir / "investigations.json"

@@ -2,10 +2,10 @@
 Memory CLI - Command-line interface for managing agent memory.
 
 Usage:
-    python -m businessclaw.memory.tools.cli journal search "AAPL"
-    python -m businessclaw.memory.tools.cli journal stats
-    python -m businessclaw.memory.tools.cli investigations list
-    python -m businessclaw.memory.tools.cli knowledge search "Apple"
+    python -m agent.memory.tools.cli journal search "AAPL"
+    python -m agent.memory.tools.cli journal stats
+    python -m agent.memory.tools.cli investigations list
+    python -m agent.memory.tools.cli knowledge search "Apple"
 """
 
 import argparse
@@ -18,7 +18,7 @@ from ..knowledge_graph import KnowledgeGraph
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BusinessClaw Memory CLI")
+    parser = argparse.ArgumentParser(description="GiesClaw Memory CLI")
     parser.add_argument("--agent", default="Agent", help="Agent name")
 
     subparsers = parser.add_subparsers(dest="command")

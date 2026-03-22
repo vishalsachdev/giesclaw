@@ -50,7 +50,7 @@ Respond in JSON format:
     "risks_to_estimate": ["...", "..."]
 }}"""
 
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
     response = client.call(prompt, max_tokens=1000, temperature=0.3)
 
     try:

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Skill Catalog CLI - Browse and search BusinessClaw skills.
+Skill Catalog CLI - Browse and search GiesClaw skills.
 
 Usage:
-    python -m businessclaw.skill_catalog --stats
-    python -m businessclaw.skill_catalog --search "valuation"
-    python -m businessclaw.skill_catalog --suggest "Apple competitive strategy"
-    python -m businessclaw.skill_catalog --list
+    python -m agent.skill_catalog --stats
+    python -m agent.skill_catalog --search "valuation"
+    python -m agent.skill_catalog --suggest "Apple competitive strategy"
+    python -m agent.skill_catalog --list
 """
 
 import argparse
@@ -15,7 +15,7 @@ from .core.skill_registry import get_registry
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BusinessClaw Skill Catalog")
+    parser = argparse.ArgumentParser(description="GiesClaw Skill Catalog")
     parser.add_argument("--stats", action="store_true", help="Show registry statistics")
     parser.add_argument("--search", help="Search skills by keyword")
     parser.add_argument("--suggest", help="Suggest skills for a research topic")

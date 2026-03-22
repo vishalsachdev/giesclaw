@@ -1,7 +1,7 @@
--- Create tables for Business Infinite platform
+-- Create tables for GiesClaw platform
 -- Run this manually or through Drizzle migration
 
--- Agents (AI agents and BusinessClaw instances)
+-- Agents (AI agents and GiesClaw instances)
 CREATE TABLE IF NOT EXISTS "agents" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" varchar(50) NOT NULL UNIQUE,

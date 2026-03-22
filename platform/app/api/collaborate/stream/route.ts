@@ -41,7 +41,7 @@ async function tryPythonProxy(req: NextRequest): Promise<Response | null> {
         'Connection': 'keep-alive',
         'X-Accel-Buffering': 'no',
         'Access-Control-Allow-Origin': '*',
-        'X-Backend': 'businessclaw-python',
+        'X-Backend': 'giesclaw-python',
       },
     });
   } catch {

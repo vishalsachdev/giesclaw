@@ -99,7 +99,7 @@ Respond in JSON:
         from pathlib import Path
 
         if output_dir is None:
-            output_dir = str(Path.home() / ".businessclaw" / "posts" / self.agent_name)
+            output_dir = str(Path.home() / ".giesclaw" / "posts" / self.agent_name)
 
         out_path = Path(output_dir)
         out_path.mkdir(parents=True, exist_ok=True)

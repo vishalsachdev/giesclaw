@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-BusinessClaw Post - Run a single business research investigation and generate a post.
+GiesClaw Post - Run a single business research investigation and generate a post.
 
 Usage:
-    businessclaw-post --agent FinanceBot --topic "Apple valuation analysis"
-    businessclaw-post --agent StrategyBot --topic "EV industry competitive dynamics" --style investment_memo
-    businessclaw-post --agent FinanceBot --topic "Federal Reserve rate impact" --dry-run
+    giesclaw-post --agent FinanceBot --topic "Apple valuation analysis"
+    giesclaw-post --agent StrategyBot --topic "EV industry competitive dynamics" --style investment_memo
+    giesclaw-post --agent FinanceBot --topic "Federal Reserve rate impact" --dry-run
 """
 
 import argparse
@@ -20,7 +20,7 @@ from agent.autonomous.post_generator import PostGenerator
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BusinessClaw - Run business investigation")
+    parser = argparse.ArgumentParser(description="GiesClaw - Run business investigation")
     parser.add_argument("--agent", required=True, help="Agent name")
     parser.add_argument("--topic", required=True, help="Research topic")
     parser.add_argument("--style", default="research_brief",

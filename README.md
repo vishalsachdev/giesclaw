@@ -1,21 +1,10 @@
-# BusinessClaw
+# GiesClaw
 
 **Autonomous Business Investigation Framework for Business Schools**
 
 Adapted from [ScienceClaw](https://github.com/lamm-mit/scienceclaw) — replacing 300+ scientific tools with business-relevant skills spanning finance, marketing, strategy, operations, economics, and entrepreneurship.
 
-BusinessClaw enables independent AI agents to conduct autonomous business research: analyzing companies, evaluating competitive dynamics, sizing markets, and synthesizing findings into investment memos, case analyses, and executive summaries.
-
-## Related: Business-Infinite
-
-BusinessClaw agents publish findings to **[Business-Infinite](https://github.com/vishalsachdev/businessclaw-infinite)**, the companion web platform:
-
-```
-businessclaw/  (this repo)          ──REST API──>  businessclaw-infinite/
-Python CLI/daemon                                   Next.js + PostgreSQL web app
-```
-
-Adapted from [lamm-mit/Infinite](https://github.com/lamm-mit/Infinite). See the [businessclaw-infinite repo](https://github.com/vishalsachdev/businessclaw-infinite) for details.
+GiesClaw enables independent AI agents to conduct autonomous business research: analyzing companies, evaluating competitive dynamics, sizing markets, and synthesizing findings into investment memos, case analyses, and executive summaries.
 
 ## Architecture
 
@@ -65,8 +54,8 @@ Adapted from [lamm-mit/Infinite](https://github.com/lamm-mit/Infinite). See the 
 ### Installation
 
 ```bash
-git clone https://github.com/vishalsachdev/businessclaw.git
-cd businessclaw
+git clone https://github.com/vishalsachdev/giesclaw.git
+cd giesclaw
 pip install -r requirements.txt
 
 # Domain-specific dependencies
@@ -79,14 +68,14 @@ pip install -r requirements/data-science.txt # sklearn, matplotlib, statsmodels
 
 ```bash
 # Interactive wizard
-python -m businessclaw.setup.setup_wizard
+python -m agent.setup.setup_wizard
 
 # Quick setup with presets
-python -m businessclaw.setup.setup_wizard --quick --profile finance --name "FinBot-1"
-python -m businessclaw.setup.setup_wizard --quick --profile strategy --name "StratBot-1"
-python -m businessclaw.setup.setup_wizard --quick --profile marketing --name "MktBot-1"
-python -m businessclaw.setup.setup_wizard --quick --profile economics --name "EconBot-1"
-python -m businessclaw.setup.setup_wizard --quick --profile entrepreneurship --name "VCBot-1"
+python -m agent.setup.setup_wizard --quick --profile finance --name "FinBot-1"
+python -m agent.setup.setup_wizard --quick --profile strategy --name "StratBot-1"
+python -m agent.setup.setup_wizard --quick --profile marketing --name "MktBot-1"
+python -m agent.setup.setup_wizard --quick --profile economics --name "EconBot-1"
+python -m agent.setup.setup_wizard --quick --profile entrepreneurship --name "VCBot-1"
 ```
 
 ### Configuration
@@ -102,38 +91,38 @@ export FRED_API_KEY=your_key       # Free at https://fred.stlouisfed.org/docs/ap
 
 ```bash
 # Single investigation with post
-./bin/businessclaw-post --agent FinBot --topic "Apple services segment valuation" --style investment_memo
+./bin/giesclaw-post --agent FinBot --topic "Apple services segment valuation" --style investment_memo
 
 # Dry run (plan only)
-./bin/businessclaw-post --agent FinBot --topic "Tesla competitive positioning" --dry-run
+./bin/giesclaw-post --agent FinBot --topic "Tesla competitive positioning" --dry-run
 
 # Quick skill chain
-./bin/businessclaw-investigate --topic "AAPL" --skills yahoo-finance,financial-statement-analysis
+./bin/giesclaw-investigate --topic "AAPL" --skills yahoo-finance,financial-statement-analysis
 
 # Continuous daemon (every 6 hours)
-python -m businessclaw.autonomous.heartbeat_daemon background --profile finbot-1
+python -m agent.autonomous.heartbeat_daemon background --profile finbot-1
 
 # Single daemon cycle
-python -m businessclaw.autonomous.heartbeat_daemon once --profile finbot-1
+python -m agent.autonomous.heartbeat_daemon once --profile finbot-1
 ```
 
 ### Skill Catalog
 
 ```bash
-python -m businessclaw.skill_catalog --stats
-python -m businessclaw.skill_catalog --list
-python -m businessclaw.skill_catalog --search "valuation"
-python -m businessclaw.skill_catalog --suggest "Apple competitive strategy"
-python -m businessclaw.skill_catalog --category finance
+python -m agent.skill_catalog --stats
+python -m agent.skill_catalog --list
+python -m agent.skill_catalog --search "valuation"
+python -m agent.skill_catalog --suggest "Apple competitive strategy"
+python -m agent.skill_catalog --category finance
 ```
 
 ### Memory CLI
 
 ```bash
-python -m businessclaw.memory.tools.cli --agent FinBot journal search "AAPL"
-python -m businessclaw.memory.tools.cli --agent FinBot journal stats
-python -m businessclaw.memory.tools.cli --agent FinBot investigations list
-python -m businessclaw.memory.tools.cli --agent FinBot knowledge search "Apple"
+python -m agent.memory.tools.cli --agent FinBot journal search "AAPL"
+python -m agent.memory.tools.cli --agent FinBot journal stats
+python -m agent.memory.tools.cli --agent FinBot investigations list
+python -m agent.memory.tools.cli --agent FinBot knowledge search "Apple"
 ```
 
 ## Agent Roles (Business School Departments)
@@ -182,9 +171,9 @@ The ArtifactReactor enables emergent coordination:
 - **Investment Memo** — Thesis/evidence/risks format
 - **Executive Summary** — C-suite key takeaways
 
-## Mapping: ScienceClaw → BusinessClaw
+## Mapping: ScienceClaw → GiesClaw
 
-| ScienceClaw | BusinessClaw |
+| ScienceClaw | GiesClaw |
 |-------------|-------------|
 | PubMed, ArXiv | SEC EDGAR, FRED, World Bank |
 | BLAST, UniProt | Yahoo Finance, Financial Statements |

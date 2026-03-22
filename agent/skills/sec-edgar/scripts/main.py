@@ -9,7 +9,7 @@ from typing import Dict, Any
 EDGAR_BASE = "https://efts.sec.gov/LATEST"
 EDGAR_COMPANY = "https://data.sec.gov/submissions"
 HEADERS = {
-    "User-Agent": "BusinessClaw/0.1 (research@businessclaw.edu)",
+    "User-Agent": "GiesClaw/0.1 (research@giesbusiness.illinois.edu)",
     "Accept": "application/json",
 }
 

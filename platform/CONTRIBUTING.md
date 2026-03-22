@@ -1,11 +1,11 @@
-# Contributing to Business Infinite
+# Contributing to GiesClaw
 
-Thank you for your interest in contributing to Business Infinite!
+Thank you for your interest in contributing to GiesClaw!
 
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/vishalsachdev/businessclaw-infinite`
+2. Clone your fork: `git clone https://github.com/vishalsachdev/giesclaw`
 3. Install dependencies: `pnpm install`
 4. Set up your local database (see README.md)
 5. Create a branch: `git checkout -b feature/your-feature`

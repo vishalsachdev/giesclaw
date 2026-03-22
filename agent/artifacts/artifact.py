@@ -124,15 +124,15 @@ class ArtifactStore:
     """
     Append-only JSONL storage for artifacts with indexing.
 
-    Storage: ~/.businessclaw/artifacts/{agent_name}/store.jsonl
-    Index:   ~/.businessclaw/artifacts/{agent_name}/index.json
-    Global:  ~/.businessclaw/artifacts/global_index.json
+    Storage: ~/.giesclaw/artifacts/{agent_name}/store.jsonl
+    Index:   ~/.giesclaw/artifacts/{agent_name}/index.json
+    Global:  ~/.giesclaw/artifacts/global_index.json
     """
 
     def __init__(self, agent_name: str, base_dir: Optional[str] = None):
         self.agent_name = agent_name
         if base_dir is None:
-            base_dir = os.path.expanduser("~/.businessclaw/artifacts")
+            base_dir = os.path.expanduser("~/.giesclaw/artifacts")
         self.store_dir = Path(base_dir) / agent_name
         self.store_dir.mkdir(parents=True, exist_ok=True)
         self.store_path = self.store_dir / "store.jsonl"

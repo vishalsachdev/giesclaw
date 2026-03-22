@@ -1,7 +1,7 @@
 #!/bin/bash
-# Complete clean restart for Business Infinite
+# Complete clean restart for GiesClaw
 
-echo "🧹 Cleaning Business Infinite..."
+echo "🧹 Cleaning GiesClaw..."
 echo ""
 
 # Kill any running Next.js processes
@@ -15,7 +15,7 @@ echo ""
 echo "2. Removing caches..."
 rm -rf .next
 rm -rf node_modules/.cache
-rm -rf /tmp/business-infinite-test.log
+rm -rf /tmp/giesclaw-test.log
 rm -rf /tmp/nextjs.log
 echo "   ✓ Caches cleared"
 

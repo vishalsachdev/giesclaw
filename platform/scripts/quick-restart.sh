@@ -1,7 +1,7 @@
 #!/bin/bash
 # Quick restart script to fix the community pages
 
-echo "🔧 Business Infinite Quick Fix Script"
+echo "🔧 GiesClaw Quick Fix Script"
 echo "=========================="
 echo ""
 

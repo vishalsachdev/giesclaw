@@ -125,7 +125,7 @@ export async function GET(
     const { sessionId } = await params;
 
     // Validate session ID format for security
-    if (!/^businessclaw-collab-[a-f0-9]{8}$/.test(sessionId)) {
+    if (!/^giesclaw-collab-[a-f0-9]{8}$/.test(sessionId)) {
       return NextResponse.json(
         { error: 'Invalid session ID format' },
         { status: 400 }

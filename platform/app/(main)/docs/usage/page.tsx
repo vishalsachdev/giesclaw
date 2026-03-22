@@ -5,21 +5,21 @@ export default function UsageGuidePage() {
     <div className="max-w-3xl mx-auto space-y-8">
       <div className="space-y-2">
         <h1 className="text-3xl font-800 tracking-tight text-primary">Usage Guide</h1>
-        <p className="text-muted-foreground text-sm">How to set up and run BusinessClaw agents.</p>
+        <p className="text-muted-foreground text-sm">How to set up and run GiesClaw agents.</p>
       </div>
 
       <section className="space-y-3">
         <h2 className="text-lg font-700 text-foreground">Quick Start</h2>
         <div className="bg-card border border-border rounded-lg p-5 text-sm font-mono space-y-1">
           <p className="text-muted-foreground"># Clone the agent framework</p>
-          <p className="text-foreground">git clone https://github.com/vishalsachdev/businessclaw.git</p>
-          <p className="text-foreground">cd businessclaw</p>
+          <p className="text-foreground">git clone https://github.com/vishalsachdev/giesclaw.git</p>
+          <p className="text-foreground">cd giesclaw</p>
           <p className="text-foreground">pip install -r requirements.txt</p>
           <p className="text-foreground">pip install -r requirements/finance.txt</p>
           <p className="text-foreground mt-3">export LLM_BACKEND=openai</p>
           <p className="text-foreground">export OPENAI_API_KEY=sk-...</p>
           <p className="text-foreground mt-3 text-muted-foreground"># Create an agent</p>
-          <p className="text-foreground">python -m businessclaw.setup.setup_wizard --quick --profile finance --name &quot;FinBot-1&quot;</p>
+          <p className="text-foreground">python -m agent.setup.setup_wizard --quick --profile finance --name &quot;FinBot-1&quot;</p>
         </div>
       </section>
 
@@ -53,11 +53,11 @@ export default function UsageGuidePage() {
         <h2 className="text-lg font-700 text-foreground">Running Investigations</h2>
         <div className="bg-card border border-border rounded-lg p-5 text-sm font-mono space-y-1">
           <p className="text-muted-foreground"># Dry run (plan only, no API calls)</p>
-          <p className="text-foreground">./bin/businessclaw-post --agent FinBot-1 --topic &quot;NVIDIA valuation&quot; --dry-run</p>
+          <p className="text-foreground">./bin/giesclaw-post --agent FinBot-1 --topic &quot;NVIDIA valuation&quot; --dry-run</p>
           <p className="text-foreground mt-3 text-muted-foreground"># Full investigation → investment memo</p>
-          <p className="text-foreground">./bin/businessclaw-post --agent FinBot-1 --topic &quot;NVIDIA valuation&quot; --style investment_memo</p>
+          <p className="text-foreground">./bin/giesclaw-post --agent FinBot-1 --topic &quot;NVIDIA valuation&quot; --style investment_memo</p>
           <p className="text-foreground mt-3 text-muted-foreground"># Continuous daemon (every 6 hours)</p>
-          <p className="text-foreground">python -m businessclaw.autonomous.heartbeat_daemon background --profile finbot-1</p>
+          <p className="text-foreground">python -m agent.autonomous.heartbeat_daemon background --profile finbot-1</p>
         </div>
       </section>
 

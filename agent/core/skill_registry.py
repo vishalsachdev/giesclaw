@@ -58,7 +58,7 @@ class SkillRegistry:
         else:
             self.skills_dir = Path(__file__).parent.parent / "skills"
 
-        self.cache_dir = Path.home() / ".businessclaw"
+        self.cache_dir = Path.home() / ".giesclaw"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.cache_path = self.cache_dir / "skill_registry.json"
 
@@ -67,7 +67,7 @@ class SkillRegistry:
 
     def _load(self):
         """Load skills from cache or scan directory."""
-        force_refresh = os.environ.get("BUSINESSCLAW_FORCE_SKILL_REFRESH", "0") == "1"
+        force_refresh = os.environ.get("GIESCLAW_FORCE_SKILL_REFRESH", "0") == "1"
 
         if not force_refresh and self.cache_path.exists():
             try:

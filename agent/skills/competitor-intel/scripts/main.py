@@ -26,7 +26,7 @@ def run(**kwargs):
 
 
 def _identify_competitors(company: str):
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
     prompt = f"""Identify the top 5 direct competitors for {company}.
 Respond in JSON:
 {{
@@ -75,7 +75,7 @@ def _compare_financials(company: str, competitors: list):
 
 
 def _analyze_positioning(company: str, competitors: list):
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
     comp_str = ", ".join(competitors) if competitors else "main competitors"
     prompt = f"""Analyze the competitive positioning of {company} vs {comp_str}.
 Respond in JSON:

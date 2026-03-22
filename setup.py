@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BusinessClaw Setup - Install and configure the framework.
+GiesClaw Setup - Install and configure the framework.
 
 Usage:
     python setup.py                                    # Interactive setup

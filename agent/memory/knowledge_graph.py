@@ -18,7 +18,7 @@ class KnowledgeGraph:
     def __init__(self, agent_name: str, base_dir: Optional[str] = None):
         self.agent_name = agent_name
         if base_dir is None:
-            base_dir = os.path.expanduser("~/.businessclaw/knowledge")
+            base_dir = os.path.expanduser("~/.giesclaw/knowledge")
         self.kg_dir = Path(base_dir) / agent_name
         self.kg_dir.mkdir(parents=True, exist_ok=True)
         self.nodes_path = self.kg_dir / "nodes.json"

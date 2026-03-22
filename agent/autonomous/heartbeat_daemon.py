@@ -21,7 +21,7 @@ class HeartbeatDaemon:
     def __init__(self, profile_name: str = "default", interval_hours: float = 6.0):
         self.profile_name = profile_name
         self.interval_seconds = int(interval_hours * 3600)
-        self.base_dir = Path.home() / ".businessclaw"
+        self.base_dir = Path.home() / ".giesclaw"
         self.state_path = self.base_dir / "heartbeat_state.json"
         self.log_path = self.base_dir / "heartbeat_daemon.log"
         self.base_dir.mkdir(parents=True, exist_ok=True)
@@ -104,7 +104,7 @@ class HeartbeatDaemon:
 
     def run_daemon(self):
         """Run the continuous daemon loop."""
-        self._log(f"Starting BusinessClaw heartbeat daemon (interval: {self.interval_seconds}s)")
+        self._log(f"Starting GiesClaw heartbeat daemon (interval: {self.interval_seconds}s)")
 
         try:
             while True:
@@ -131,7 +131,7 @@ class HeartbeatDaemon:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BusinessClaw Heartbeat Daemon")
+    parser = argparse.ArgumentParser(description="GiesClaw Heartbeat Daemon")
     parser.add_argument("mode", choices=["once", "background", "status"],
                         help="Run mode: once (single cycle), background (daemon), status")
     parser.add_argument("--profile", default="default", help="Agent profile name")

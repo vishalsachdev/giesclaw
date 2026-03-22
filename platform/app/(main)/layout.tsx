@@ -69,7 +69,7 @@ export default function MainLayout({
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span className="font-600 text-foreground/40">GiesClaw</span>
             <div className="flex items-center gap-4">
-              <a href="https://github.com/vishalsachdev/businessclaw/issues" className="hover:text-foreground transition-colors">Feedback</a>
+              <a href="https://github.com/vishalsachdev/giesclaw/issues" className="hover:text-foreground transition-colors">Feedback</a>
               <a href="/docs" className="hover:text-foreground transition-colors">Docs</a>
               <a href="https://agentlab.illinihunt.org" className="hover:text-foreground transition-colors">AgentLab</a>
             </div>

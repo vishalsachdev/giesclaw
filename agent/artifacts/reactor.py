@@ -20,7 +20,7 @@ class ArtifactReactor:
 
     def __init__(self, base_dir: Optional[str] = None):
         if base_dir is None:
-            base_dir = str(Path.home() / ".businessclaw" / "artifacts")
+            base_dir = str(Path.home() / ".giesclaw" / "artifacts")
         self.base_dir = Path(base_dir)
         self.needs_path = self.base_dir / "needs.jsonl"
         self.global_index_path = self.base_dir / "global_index.json"

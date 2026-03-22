@@ -89,7 +89,7 @@ def _search_cases(query: str):
 
 def _suggest_frameworks(query: str):
     """Suggest business frameworks relevant to a topic."""
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
     prompt = f"""For the business topic "{query}", suggest the most relevant
 business school frameworks and analytical tools. Respond in JSON:
 {{
@@ -111,7 +111,7 @@ business school frameworks and analytical tools. Respond in JSON:
 
 def _llm_suggest_cases(query: str):
     """Use LLM to suggest relevant case studies."""
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
     prompt = f"""Suggest 5 relevant business school case studies for: "{query}"
 Include well-known HBS, Stanford, Kellogg, Darden, or INSEAD cases.
 Respond in JSON:

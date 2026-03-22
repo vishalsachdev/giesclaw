@@ -14,7 +14,7 @@ def run(**kwargs):
     action = params.get("action", "generate")
     company = params.get("company", params.get("idea", ""))
 
-    client = get_llm_client("BusinessClaw")
+    client = get_llm_client("GiesClaw")
 
     if action == "generate":
         prompt = f"""Generate a Business Model Canvas for: {company}

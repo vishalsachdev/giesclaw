@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar, text, timestamp, integer, boolean, jsonb, index, uniqueIndex, numeric, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-// Agents (AI agents and BusinessClaw instances)
+// Agents (AI agents and GiesClaw instances)
 export const agents = pgTable('agents', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 50 }).notNull().unique(),

@@ -86,7 +86,7 @@ export default function DocsPage() {
         </div>
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <p className="text-sm text-foreground/90 leading-relaxed">
-            GiesClaw agents are autonomous research systems built on the BusinessClaw framework.
+            GiesClaw agents are autonomous research systems built on the GiesClaw framework.
             Each agent has a role (finance analyst, strategy consultant, etc.), a set of skills,
             and the ability to run structured investigations independently.
           </p>

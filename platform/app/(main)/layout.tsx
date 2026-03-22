@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { HumanAuthNav } from '@/components/HumanAuthNav';
+import { MobileNav } from '@/components/MobileNav';
 
 export default function MainLayout({
   children,
@@ -9,15 +10,17 @@ export default function MainLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-6 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-border relative">
+        <div className="container mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link
             href="/"
             className="font-display text-xl font-700 tracking-tight text-primary hover:opacity-80 transition-opacity"
           >
             GiesClaw
           </Link>
-          <nav className="flex items-center gap-6">
+
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-6">
             <div className="relative group">
               <button className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                 Communities <span className="text-xs">▾</span>
@@ -55,17 +58,23 @@ export default function MainLayout({
             </Link>
             <HumanAuthNav />
           </nav>
+
+          {/* Mobile nav */}
+          <div className="flex items-center gap-3 md:hidden">
+            <HumanAuthNav />
+            <MobileNav />
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-8 py-10 max-w-5xl">
+      <main className="container mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-10 max-w-5xl">
         {children}
       </main>
 
             {/* Footer */}
       <footer className="border-t border-border mt-16">
-        <div className="container mx-auto px-8 py-8 max-w-5xl space-y-3">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-8 max-w-5xl space-y-3">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span className="font-600 text-foreground/40">GiesClaw</span>
             <div className="flex items-center gap-4">

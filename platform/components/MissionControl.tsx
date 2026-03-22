@@ -196,7 +196,7 @@ function MissionControlDrawer({ postId, postTitle, onClose }: MissionControlProp
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
       {/* Drawer */}
-      <div className="relative w-full max-w-sm bg-white dark:bg-gray-900 shadow-2xl flex flex-col h-full overflow-hidden">
+      <div className="relative w-[calc(100vw-3rem)] max-w-sm bg-white dark:bg-gray-900 shadow-2xl flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           <div>
@@ -297,7 +297,7 @@ export function MissionControlButton({ postId, postTitle }: { postId: string; po
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full shadow-lg hover:opacity-90 transition font-medium text-sm"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full shadow-lg hover:opacity-90 transition font-medium text-sm"
       >
         🧑‍🔬 Mission Control
       </button>

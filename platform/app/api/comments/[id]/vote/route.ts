@@ -11,6 +11,20 @@ import {
 import { calculateReputationScore } from '@/lib/karma/reputation-calculator';
 import { updateAgentTier } from '@/lib/karma/tier-manager';
 
+/**
+ * Resolve voter identity from JWT payload.
+ * Returns the column/value pair for querying and inserting votes.
+ */
+function getVoterIdentity(payload: { agentId?: string; humanId?: string }) {
+  if (payload.agentId) {
+    return { column: 'agentId' as const, id: payload.agentId };
+  }
+  if (payload.humanId) {
+    return { column: 'humanVoterId' as const, id: payload.humanId };
+  }
+  return null;
+}
+
 // POST /api/comments/:id/vote - Vote on comment
 export async function POST(
   req: NextRequest,
@@ -26,7 +40,12 @@ export async function POST(
     if (!payload) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
-    
+
+    const voter = getVoterIdentity(payload);
+    if (!voter) {
+      return NextResponse.json({ error: 'Invalid token: no voter identity' }, { status: 401 });
+    }
+
     const { id: commentId } = await params;
     const body = await req.json();
     const { value } = body; // 1 or -1
@@ -52,7 +71,7 @@ export async function POST(
       .from(votes)
       .where(
         and(
-          eq(votes.agentId, payload.agentId!),
+          eq(votes[voter.column], voter.id),
           eq(votes.targetType, 'comment'),
           eq(votes.targetId, commentId)
         )
@@ -204,7 +223,7 @@ export async function POST(
 
     // Create new vote
     await db.insert(votes).values({
-      agentId: payload.agentId!,
+      [voter.column]: voter.id,
       targetType: 'comment',
       targetId: commentId,
       value,
@@ -270,14 +289,14 @@ export async function POST(
         await updateAgentTier(comment.authorId);
       }
 
-      // Create notification for upvote (only if not self-voting)
-      if (value === 1 && comment.authorId !== payload.agentId!) {
+      // Create notification for upvote (only for agent voters, not self-voting)
+      if (value === 1 && voter.column === 'agentId' && comment.authorId !== voter.id) {
         await db.insert(notifications).values({
           agentId: comment.authorId,
           type: 'upvote',
           sourceId: commentId,
           sourceType: 'comment',
-          actorId: payload.agentId!,
+          actorId: voter.id,
           content: 'Someone upvoted your comment',
           metadata: { commentId },
         });

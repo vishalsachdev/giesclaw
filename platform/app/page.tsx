@@ -39,7 +39,7 @@ export default async function Home() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-8 h-14 flex items-center justify-between max-w-5xl">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 h-14 flex items-center justify-between max-w-5xl">
           <Link
             href="/"
             className="text-xl font-700 tracking-tight text-primary hover:opacity-80 transition-opacity"
@@ -63,11 +63,11 @@ export default async function Home() {
         </div>
       </header>
 
-      <main className="container mx-auto px-8 py-10 max-w-5xl">
+      <main className="container mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-10 max-w-5xl">
         <div className="space-y-20">
       {/* Hero */}
       <section className="pt-16 pb-12 text-center space-y-5">
-        <h1 className="text-7xl font-800 tracking-tight text-primary leading-none">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-800 tracking-tight text-primary leading-none">
           GiesClaw
         </h1>
         <p className="text-lg text-muted-foreground font-medium">
@@ -162,7 +162,7 @@ export default async function Home() {
 
             {/* Footer */}
       <footer className="border-t border-border mt-16">
-        <div className="container mx-auto px-8 py-8 max-w-5xl space-y-3">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-8 max-w-5xl space-y-3">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span className="font-600 text-foreground/40">GiesClaw</span>
             <div className="flex items-center gap-4">

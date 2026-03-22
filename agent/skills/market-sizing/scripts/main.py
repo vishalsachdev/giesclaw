@@ -7,6 +7,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 from agent.core.llm_client import get_llm_client
+from agent.skills._shared.web_search import search_web, format_search_context
 
 
 def run(**kwargs):
@@ -15,7 +16,25 @@ def run(**kwargs):
     geography = params.get("geography", "global")
     methodology = params.get("methodology", "both")
 
-    prompt = f"""Perform a market sizing analysis for: {market}
+    # Web search grounding
+    search_queries = [
+        f"{market} market size TAM revenue {geography}",
+        f"{market} market growth forecast analysis",
+    ]
+    all_results = []
+    for q in search_queries:
+        all_results.extend(search_web(q, max_results=3))
+    search_context = format_search_context(all_results)
+
+    grounding_block = ""
+    if search_context:
+        grounding_block = (
+            f"Use the following recent web search results as grounding data:\n"
+            f"{search_context}\n\n"
+            f"Based on this information and your knowledge, "
+        )
+
+    prompt = f"""{grounding_block}Perform a market sizing analysis for: {market}
 Geography: {geography}
 Methodology: {methodology}
 
@@ -57,11 +76,19 @@ Respond in JSON format:
         import re
         json_match = re.search(r"\{.*\}", response, re.DOTALL)
         if json_match:
-            return json.loads(json_match.group())
+            result = json.loads(json_match.group())
+            result["search_grounded"] = bool(search_context)
+            result["search_queries"] = search_queries
+            return result
     except Exception:
         pass
 
-    return {"market": market, "raw_analysis": response}
+    return {
+        "market": market,
+        "raw_analysis": response,
+        "search_grounded": bool(search_context),
+        "search_queries": search_queries,
+    }
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 from agent.core.llm_client import get_llm_client
+from agent.skills._shared.web_search import search_web, format_search_context
 
 
 def run(**kwargs):
@@ -26,8 +27,21 @@ def run(**kwargs):
 
 
 def _identify_competitors(company: str):
+    # Web search grounding
+    search_queries = [f"{company} top competitors market share industry"]
+    web_results = search_web(search_queries[0], max_results=5)
+    search_context = format_search_context(web_results)
+
+    grounding_block = ""
+    if search_context:
+        grounding_block = (
+            f"Use the following recent web search results as grounding data:\n"
+            f"{search_context}\n\n"
+            f"Based on this information and your knowledge, "
+        )
+
     client = get_llm_client("GiesClaw")
-    prompt = f"""Identify the top 5 direct competitors for {company}.
+    prompt = f"""{grounding_block}Identify the top 5 direct competitors for {company}.
 Respond in JSON:
 {{
     "company": "{company}",
@@ -40,10 +54,18 @@ Respond in JSON:
         import re
         json_match = re.search(r"\{.*\}", response, re.DOTALL)
         if json_match:
-            return json.loads(json_match.group())
+            result = json.loads(json_match.group())
+            result["search_grounded"] = bool(search_context)
+            result["search_queries"] = search_queries
+            return result
     except Exception:
         pass
-    return {"company": company, "raw": response}
+    return {
+        "company": company,
+        "raw": response,
+        "search_grounded": bool(search_context),
+        "search_queries": search_queries,
+    }
 
 
 def _compare_financials(company: str, competitors: list):
@@ -75,9 +97,23 @@ def _compare_financials(company: str, competitors: list):
 
 
 def _analyze_positioning(company: str, competitors: list):
-    client = get_llm_client("GiesClaw")
     comp_str = ", ".join(competitors) if competitors else "main competitors"
-    prompt = f"""Analyze the competitive positioning of {company} vs {comp_str}.
+
+    # Web search grounding
+    search_queries = [f"{company} vs {comp_str} competitive positioning strategy"]
+    web_results = search_web(search_queries[0], max_results=5)
+    search_context = format_search_context(web_results)
+
+    grounding_block = ""
+    if search_context:
+        grounding_block = (
+            f"Use the following recent web search results as grounding data:\n"
+            f"{search_context}\n\n"
+            f"Based on this information and your knowledge, "
+        )
+
+    client = get_llm_client("GiesClaw")
+    prompt = f"""{grounding_block}Analyze the competitive positioning of {company} vs {comp_str}.
 Respond in JSON:
 {{
     "company": "{company}",
@@ -94,10 +130,18 @@ Respond in JSON:
         import re
         json_match = re.search(r"\{.*\}", response, re.DOTALL)
         if json_match:
-            return json.loads(json_match.group())
+            result = json.loads(json_match.group())
+            result["search_grounded"] = bool(search_context)
+            result["search_queries"] = search_queries
+            return result
     except Exception:
         pass
-    return {"company": company, "raw": response}
+    return {
+        "company": company,
+        "raw": response,
+        "search_grounded": bool(search_context),
+        "search_queries": search_queries,
+    }
 
 
 if __name__ == "__main__":

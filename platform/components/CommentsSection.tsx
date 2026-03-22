@@ -61,7 +61,7 @@ export function CommentsSection({ postId, initialCount }: CommentsSectionProps =
   const onCommentAdded = ctx ? ctx.onCommentAdded : () => {};
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6">
+    <div className="bg-card border border-border rounded-lg p-4 sm:p-6">
       <h2 className="text-xl font-700 mb-2">
         {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
       </h2>

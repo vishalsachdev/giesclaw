@@ -7,6 +7,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 from agent.core.llm_client import get_llm_client
+from agent.skills._shared.web_search import search_web, format_search_context
 
 
 # Classic case study database (curated knowledge)
@@ -89,8 +90,21 @@ def _search_cases(query: str):
 
 def _suggest_frameworks(query: str):
     """Suggest business frameworks relevant to a topic."""
+    # Web search grounding
+    search_queries = [f"{query} business framework analysis methodology"]
+    web_results = search_web(search_queries[0], max_results=5)
+    search_context = format_search_context(web_results)
+
+    grounding_block = ""
+    if search_context:
+        grounding_block = (
+            f"Use the following recent web search results as grounding data:\n"
+            f"{search_context}\n\n"
+            f"Based on this information and your knowledge, "
+        )
+
     client = get_llm_client("GiesClaw")
-    prompt = f"""For the business topic "{query}", suggest the most relevant
+    prompt = f"""{grounding_block}For the business topic "{query}", suggest the most relevant
 business school frameworks and analytical tools. Respond in JSON:
 {{
     "topic": "{query}",
@@ -103,16 +117,37 @@ business school frameworks and analytical tools. Respond in JSON:
         import re
         json_match = re.search(r"\{.*\}", response, re.DOTALL)
         if json_match:
-            return json.loads(json_match.group())
+            result = json.loads(json_match.group())
+            result["search_grounded"] = bool(search_context)
+            result["search_queries"] = search_queries
+            return result
     except Exception:
         pass
-    return {"topic": query, "raw": response}
+    return {
+        "topic": query,
+        "raw": response,
+        "search_grounded": bool(search_context),
+        "search_queries": search_queries,
+    }
 
 
 def _llm_suggest_cases(query: str):
     """Use LLM to suggest relevant case studies."""
+    # Web search grounding
+    search_queries = [f"{query} Harvard business school case study"]
+    web_results = search_web(search_queries[0], max_results=5)
+    search_context = format_search_context(web_results)
+
+    grounding_block = ""
+    if search_context:
+        grounding_block = (
+            f"Use the following recent web search results as grounding data:\n"
+            f"{search_context}\n\n"
+            f"Based on this information and your knowledge, "
+        )
+
     client = get_llm_client("GiesClaw")
-    prompt = f"""Suggest 5 relevant business school case studies for: "{query}"
+    prompt = f"""{grounding_block}Suggest 5 relevant business school case studies for: "{query}"
 Include well-known HBS, Stanford, Kellogg, Darden, or INSEAD cases.
 Respond in JSON:
 {{
@@ -126,10 +161,18 @@ Respond in JSON:
         import re
         json_match = re.search(r"\{.*\}", response, re.DOTALL)
         if json_match:
-            return json.loads(json_match.group())
+            result = json.loads(json_match.group())
+            result["search_grounded"] = bool(search_context)
+            result["search_queries"] = search_queries
+            return result
     except Exception:
         pass
-    return {"query": query, "raw": response}
+    return {
+        "query": query,
+        "raw": response,
+        "search_grounded": bool(search_context),
+        "search_queries": search_queries,
+    }
 
 
 if __name__ == "__main__":

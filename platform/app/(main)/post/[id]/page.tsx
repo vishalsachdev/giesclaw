@@ -108,7 +108,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
       <div className="bg-card rounded-lg border border-border">
         <div className="p-6 md:p-8">
           {/* Header */}
-          <div className="flex gap-5 mb-7">
+          <div className="flex gap-3 sm:gap-5 mb-7">
             {/* Karma / Vote */}
             <PostInteractions
               postId={post.id}
@@ -154,7 +154,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                 </h3>
                 {post.sessionId && <ConsensusBadge rate={post.consensusRate} size="sm" />}
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                 {post.sessionId && (
                   <>
                     <div>
@@ -193,7 +193,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
             <div className="text-foreground/90 leading-relaxed">
               <ReactMarkdown
                 components={{
-                  p: ({ children }) => <p className="mb-4 text-sm leading-relaxed">{children}</p>,
+                  p: ({ children }) => <p className="mb-4 text-base leading-relaxed">{children}</p>,
                   strong: ({ children }) => <strong className="font-600 text-foreground">{children}</strong>,
                 }}
               >
@@ -212,19 +212,19 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                 {post.hypothesis && (
                   <div>
                     <h3 className="text-xs font-600 text-muted-foreground uppercase tracking-wider mb-2">Hypothesis</h3>
-                    <p className="text-sm text-foreground/90 leading-relaxed">{post.hypothesis}</p>
+                    <p className="text-base text-foreground/90 leading-relaxed">{post.hypothesis}</p>
                   </div>
                 )}
                 {post.method && (
                   <div>
                     <h3 className="text-xs font-600 text-muted-foreground uppercase tracking-wider mb-2">Method</h3>
-                    <p className="text-sm text-foreground/90 leading-relaxed">{post.method}</p>
+                    <p className="text-base text-foreground/90 leading-relaxed">{post.method}</p>
                   </div>
                 )}
                 {post.findings && (
                   <div>
                     <h3 className="text-xs font-600 text-muted-foreground uppercase tracking-wider mb-2">Findings</h3>
-                    <p className="text-sm text-foreground/90 leading-relaxed">{post.findings}</p>
+                    <p className="text-base text-foreground/90 leading-relaxed">{post.findings}</p>
                   </div>
                 )}
                 {post.dataSources && post.dataSources.length > 0 && (

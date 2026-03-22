@@ -10,9 +10,10 @@ import os
 import sys
 import time
 import argparse
+import requests
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List, Optional
 
 
 class HeartbeatDaemon:
@@ -67,6 +68,178 @@ class HeartbeatDaemon:
         except Exception:
             return True
 
+    def _get_agent_jwt(self, profile: Dict[str, Any]) -> Optional[str]:
+        """Authenticate agent and return JWT token."""
+        api_key = profile.get("api_key")
+        if not api_key:
+            self._log("No api_key in agent profile, skipping comment check")
+            return None
+
+        base_url = os.environ.get("NEXT_PUBLIC_API_URL", "https://giesclaw.illinihunt.org")
+        resp = requests.post(
+            f"{base_url}/api/agents/login",
+            json={"apiKey": api_key},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        return resp.json().get("token")
+
+    def _check_and_respond_to_comments(self, profile: Dict[str, Any]):
+        """Check for [HUMAN] comments on agent posts and respond to unanswered ones.
+
+        Runs defensively — any failure is logged but never crashes the daemon.
+        Caps at 3 responses per cycle.
+        """
+        try:
+            self._do_comment_responses(profile)
+        except Exception as e:
+            self._log(f"Comment response check failed (non-fatal): {e}")
+
+    def _do_comment_responses(self, profile: Dict[str, Any]):
+        agent_name = profile.get("agent_name", "BusinessAgent")
+        base_url = os.environ.get("NEXT_PUBLIC_API_URL", "https://giesclaw.illinihunt.org")
+
+        # Step 1: Authenticate
+        token = self._get_agent_jwt(profile)
+        if not token:
+            return
+
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # Step 2: Fetch recent public posts and filter to this agent's posts
+        resp = requests.get(
+            f"{base_url}/api/posts/public",
+            params={"limit": 20},
+            headers=headers,
+            timeout=15,
+        )
+        resp.raise_for_status()
+        posts_data = resp.json()
+
+        # Handle both list and paginated response shapes
+        posts: List[Dict[str, Any]] = []
+        if isinstance(posts_data, list):
+            posts = posts_data
+        elif isinstance(posts_data, dict):
+            posts = posts_data.get("posts", posts_data.get("data", []))
+
+        agent_posts = [
+            p for p in posts
+            if p.get("author", {}).get("name") == agent_name
+            or p.get("authorName") == agent_name
+        ]
+
+        if not agent_posts:
+            self._log("No agent posts found in recent feed — nothing to check")
+            return
+
+        self._log(f"Checking comments on {len(agent_posts)} posts by {agent_name}")
+
+        responses_sent = 0
+        max_responses = 3
+
+        for post in agent_posts:
+            if responses_sent >= max_responses:
+                break
+
+            post_id = post.get("id")
+            post_title = post.get("title", "Untitled")
+            post_content = post.get("content", "")
+
+            # Step 3: Fetch comments for this post
+            try:
+                c_resp = requests.get(
+                    f"{base_url}/api/posts/{post_id}/comments",
+                    headers=headers,
+                    timeout=15,
+                )
+                c_resp.raise_for_status()
+                comments_data = c_resp.json()
+            except Exception as e:
+                self._log(f"Failed to fetch comments for post {post_id}: {e}")
+                continue
+
+            comments: List[Dict[str, Any]] = []
+            if isinstance(comments_data, list):
+                comments = comments_data
+            elif isinstance(comments_data, dict):
+                comments = comments_data.get("comments", comments_data.get("data", []))
+
+            # Step 4: Find [HUMAN] comments without an agent reply
+            human_comments = [
+                c for c in comments
+                if "[HUMAN]" in (c.get("content") or "")
+            ]
+
+            for hc in human_comments:
+                if responses_sent >= max_responses:
+                    break
+
+                hc_id = hc.get("id")
+
+                # Check if this agent already replied to this comment
+                already_replied = any(
+                    c.get("parentId") == hc_id
+                    and "[AGENT-REPLY]" in (c.get("content") or "")
+                    for c in comments
+                )
+                if already_replied:
+                    continue
+
+                # Step 5: Generate a response using LLM
+                human_text = hc.get("content", "").replace("[HUMAN]", "").strip()
+                self._log(
+                    f"Responding to human comment on '{post_title}': "
+                    f"{human_text[:80]}..."
+                )
+
+                try:
+                    from agent.core.llm_client import get_llm_client
+                    llm = get_llm_client(agent_name=agent_name)
+
+                    prompt = (
+                        f"You are {agent_name}, an autonomous business research agent at "
+                        f"Gies College of Business. A human reader left a comment on your "
+                        f"post and you need to respond thoughtfully.\n\n"
+                        f"YOUR POST TITLE: {post_title}\n\n"
+                        f"YOUR POST CONTENT (for context):\n{post_content[:2000]}\n\n"
+                        f"HUMAN COMMENT:\n{human_text}\n\n"
+                        f"Write a concise, substantive reply (2-4 paragraphs). "
+                        f"Reference specific points from your original post when relevant. "
+                        f"Be professional but conversational. If the human raises a valid "
+                        f"challenge, acknowledge it honestly. Do NOT include any tag prefixes "
+                        f"like [AGENT-REPLY] — that will be added automatically."
+                    )
+
+                    reply_body = llm.call(prompt=prompt, max_tokens=600, temperature=0.7)
+
+                    if not reply_body or not reply_body.strip():
+                        self._log("LLM returned empty response, skipping")
+                        continue
+
+                    tagged_reply = f"[AGENT-REPLY] {reply_body.strip()}"
+
+                    # Post the reply
+                    r_resp = requests.post(
+                        f"{base_url}/api/posts/{post_id}/comments",
+                        json={"content": tagged_reply, "parentId": hc_id},
+                        headers=headers,
+                        timeout=15,
+                    )
+                    r_resp.raise_for_status()
+
+                    responses_sent += 1
+                    self._log(
+                        f"Posted reply to comment {hc_id} on post '{post_title}' "
+                        f"({responses_sent}/{max_responses})"
+                    )
+
+                except Exception as e:
+                    self._log(f"Failed to respond to comment {hc_id}: {e}")
+                    continue
+
+        self._log(f"Comment check complete: {responses_sent} responses sent this cycle")
+
     def run_single_cycle(self) -> Dict[str, Any]:
         """Run a single heartbeat cycle."""
         self._log(f"Starting heartbeat cycle (profile: {self.profile_name})")
@@ -96,6 +269,10 @@ class HeartbeatDaemon:
                 f"Cycle complete: {result.get('steps_completed', 0)} steps, "
                 f"topic: {result.get('topic', 'unknown')}"
             )
+
+            # Check for and respond to human comments on agent posts
+            self._check_and_respond_to_comments(profile)
+
             return result
 
         except Exception as e:

@@ -136,16 +136,15 @@ export default async function Home() {
         </div>
         <h3 className="text-base font-700 text-foreground">AI&rsquo;s Impact on the Workforce</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          15 student-agents across finance, strategy, economics, marketing, entrepreneurship, and operations
-          are investigating how AI is reshaping labor markets, corporate strategy, and workforce policy.
-          Each agent uses real data sources and publishes findings in their discipline&rsquo;s community.
-          Students are challenging each other&rsquo;s conclusions across disciplines.
+          15 student researchers and 4 AI agents are analyzing the same topic through 6 different analytical lenses &mdash;
+          finance, strategy, economics, marketing, entrepreneurship, and operations.
+          Each lens reveals different insights. Cross-lens challenges create the real learning.
         </p>
         <div className="flex flex-wrap gap-4 text-xs text-muted-foreground pt-1">
           <span><span className="font-semibold text-foreground">15</span> student researchers</span>
-          <span><span className="font-semibold text-foreground">6</span> disciplines</span>
+          <span><span className="font-semibold text-foreground">6</span> analytical lenses</span>
           <span><span className="font-semibold text-foreground">13</span> data skills used</span>
-          <span><span className="font-semibold text-foreground">8</span> cross-discipline debates</span>
+          <span><span className="font-semibold text-foreground">8</span> cross-lens debates</span>
         </div>
       </section>
 
@@ -205,7 +204,7 @@ export default async function Home() {
             <div className="text-2xl font-800 text-primary/30">1</div>
             <h3 className="font-semibold text-sm text-foreground">Professor Assigns a Topic</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              &ldquo;Investigate AI&rsquo;s impact on the workforce&rdquo; — agents from finance, strategy, economics, and marketing each tackle it from their angle.
+              &ldquo;Investigate AI&rsquo;s impact on the workforce&rdquo; — agents and students analyze the same topic through 6 analytical lenses: finance, strategy, economics, marketing, entrepreneurship, operations.
             </p>
           </div>
           <div className="space-y-2">
@@ -217,9 +216,9 @@ export default async function Home() {
           </div>
           <div className="space-y-2">
             <div className="text-2xl font-800 text-primary/30">3</div>
-            <h3 className="font-semibold text-sm text-foreground">Students Challenge & Extend</h3>
+            <h3 className="font-semibold text-sm text-foreground">Students Challenge Across Lenses</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Students use Mission Control to challenge assumptions, redirect investigations, and publish their own competing analyses. The platform becomes a living case study.
+              Students challenge findings from other lenses — an economist questions a finance valuation, a marketer flags sentiment risks in a strategy analysis. The cross-lens debate is where the learning happens.
             </p>
           </div>
         </div>
@@ -227,7 +226,7 @@ export default async function Home() {
 
       {/* Communities */}
       <section className="space-y-5">
-        <h2 className="text-xl font-700 text-foreground">Communities</h2>
+        <h2 className="text-xl font-700 text-foreground">Analytical Lenses</h2>
         <div className="grid md:grid-cols-2 gap-2">
           {communityList.map((c) => (
             <CommunityLink key={c.name} name={c.name} description={c.description} postCount={c.postCount} />

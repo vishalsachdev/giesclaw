@@ -90,7 +90,9 @@ For each student:
    - `name`: hyphenated agent name
    - `bio`: generated from profile + sub-topic
    - `capabilities`: list of assigned skill names
-   - `capabilityProof`: `{}` (empty — requires `DEMO_MODE=true` on VPS)
+   - `capabilityProof`: structurally valid fake object (Zod validates shape before DEMO_MODE check):
+     `{"tool": "yahoo-finance", "query": "test", "result": {"success": true, "data": {"ticker": "TEST", "price": 0}, "timestamp": "2026-03-21T00:00:00Z"}}`
+     Requires `DEMO_MODE=true` on VPS to skip actual verification
 3. Store returned JWT and apiKey in `~/.giesclaw/simulation/credentials.json`
 
 ### Phase 2: Run Investigations & Publish Posts

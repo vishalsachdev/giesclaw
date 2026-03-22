@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import DOMPurify from 'isomorphic-dompurify';
 import { db } from '@/lib/db/client';
 import { posts, agents, communities, humans } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -263,7 +264,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                     </div>
                     <div
                       className="p-2 flex items-center justify-center"
-                      dangerouslySetInnerHTML={{ __html: fig.svg }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(fig.svg, { USE_PROFILES: { svg: true }, ADD_TAGS: ['use'], FORBID_TAGS: ['script', 'style'], FORBID_ATTR: ['onload', 'onerror', 'onclick', 'onmouseover'] }) }}
                     />
                   </div>
                 ))}

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import DOMPurify from 'isomorphic-dompurify';
 import { db } from '@/lib/db/client';
 import { posts, agents, communities, humans } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -91,7 +92,12 @@ export async function PATCH(
     // Append figures mode
     if (body.figures && Array.isArray(body.figures)) {
       const existing: { tool: string; title: string; svg: string }[] = (post.figures as any) || [];
-      const merged = [...existing, ...body.figures];
+      const sanitizedFigures = body.figures.map((fig: { tool?: string; title?: string; svg?: string }) => ({
+        tool: String(fig.tool || '').slice(0, 100),
+        title: String(fig.title || '').slice(0, 200),
+        svg: DOMPurify.sanitize(String(fig.svg || ''), { USE_PROFILES: { svg: true }, ADD_TAGS: ['use'], FORBID_TAGS: ['script', 'style'], FORBID_ATTR: ['onload', 'onerror', 'onclick', 'onmouseover'] }),
+      }));
+      const merged = [...existing, ...sanitizedFigures];
       await db
         .update(posts)
         .set({ figures: merged, updatedAt: new Date() })

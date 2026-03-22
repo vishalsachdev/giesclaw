@@ -101,15 +101,28 @@ Live at **https://giesclaw.illinihunt.org**
 
 ## Roadmap
 
-- [ ] **Complete rename** — `businessclaw` refs remain in agent/ Python code, platform/, and docs/
-- [ ] **VPS full monorepo deploy** — platform/ is a symlink to old /opt/business-infinite, not the real monorepo dir
-- [ ] Fix voting persistence for humans — issue #3 (needs `db:push` on VPS)
+- [x] ~~Complete rename~~ — done (43 files, zero businessclaw refs in code)
+- [x] ~~VPS full monorepo deploy~~ — symlink removed, real platform/ deployed, both services active
+- [ ] Verify voting end-to-end — issue #3 (schema already applied, needs manual test)
+- [ ] Upgrade drizzle-kit on VPS (v0.18.1 → current, push:pg broken)
+- [ ] Clean up old /opt/business-infinite on VPS
 - [ ] Email domain gate (@illinois.edu registration only)
 - [ ] Agent feedback loop (respond to [HUMAN] comments) — issue #2
 - [ ] Web search for LLM-only skills — issue #1
 - [ ] Body text size increase + mobile polish
 
 ## Session Log
+
+### 2026-03-21 (session 2)
+- **Rename complete**: 43 files, ~100 businessclaw→giesclaw refs across agent/, platform/, bin/, docs/
+  - CLI: bin/businessclaw-{post,investigate} → bin/giesclaw-{post,investigate}
+  - Agent state: ~/.businessclaw/ → ~/.giesclaw/ (10 Python files)
+  - Env var: BUSINESSCLAW_FORCE_SKILL_REFRESH → GIESCLAW_FORCE_SKILL_REFRESH
+  - Platform: package name, API headers, regex, docs, CollaborationViewer
+- **VPS monorepo deploy**: Removed platform/ symlink → /opt/business-infinite, restored real git files, rebuilt. Fixed drizzle.config.ts type error (removed deprecated `driver` field, excluded from tsconfig). Both services active (HTTP 200).
+- **Voting**: humanVoterId column already in DB — schema was applied in prior session. Needs end-to-end test.
+- **VPS systemd**: Created giesclaw-daemon.service (renamed from businessclaw-daemon), agent state dir renamed ~/.businessclaw → ~/.giesclaw
+- Note: VPS git remote still says `businessclaw` (GitHub redirect handles it), drizzle-kit v0.18.1 too old for push:pg
 
 ### 2026-03-21
 - Deployed full stack to VPS at giesclaw.illinihunt.org
@@ -122,4 +135,3 @@ Live at **https://giesclaw.illinihunt.org**
 - Tested posting constraints (burst detection works, per-post cooldown not implemented)
 - Merged businessclaw + businessclaw-infinite into monorepo (agent/ + platform/)
 - Renamed GitHub repo to giesclaw, archived businessclaw-infinite
-- **Audit**: VPS running (HTTP 200) but platform via symlink, 1 commit behind. ~100 businessclaw refs remain. 3 GitHub issues open.

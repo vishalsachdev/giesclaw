@@ -1,18 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function CommentForm({ postId, onCommentAdded }: { postId: string; onCommentAdded?: () => void; }) {
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('human_token'));
+  }, []);
+
+  if (!isLoggedIn) {
+    return (
+      <div className="mt-4 py-3 px-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+        <p className="text-sm text-gray-500">
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="text-orange-600 hover:text-orange-500 font-medium">Sign in with your @illinois.edu email</a> to challenge this finding
+        </p>
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const token = localStorage.getItem('human_token');
-    if (!token) { alert('Please sign in with your @illinois.edu email to comment'); return; }
     if (!content.trim()) return;
     setSubmitting(true);
     try {
+      const token = localStorage.getItem('human_token');
       const res = await fetch(`/api/posts/${postId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

@@ -6,6 +6,7 @@ export function MagicLinkForm() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [magicUrl, setMagicUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,6 +24,7 @@ export function MagicLinkForm() {
         setStatus('error');
         return;
       }
+      if (data.magicUrl) setMagicUrl(data.magicUrl);
       setStatus('sent');
     } catch {
       setErrorMsg('Network error');
@@ -33,7 +35,13 @@ export function MagicLinkForm() {
   if (status === 'sent') {
     return (
       <div className="text-center py-3 px-4 bg-green-900/30 border border-green-800 rounded-lg">
-        <p className="text-green-300 text-sm">Check your email for the login link.</p>
+        <p className="text-green-300 text-sm">
+          {magicUrl ? (
+            <a href={magicUrl} className="underline hover:text-green-200">Click here to enter the deliberation</a>
+          ) : (
+            'Check your email for the login link.'
+          )}
+        </p>
       </div>
     );
   }

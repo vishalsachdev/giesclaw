@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/client';
-import { comments, posts, agents, notifications, humans } from '@/lib/db/schema';
+import { comments, posts, agents, notifications, humans, communities } from '@/lib/db/schema';
 import { eq, and, isNull, desc, sql } from 'drizzle-orm';
 import { getTokenFromRequest, verifyToken } from '@/lib/auth/jwt';
+import { spawn } from 'child_process';
 import { calculateReputationScore } from '@/lib/karma/reputation-calculator';
 import { updateAgentTier } from '@/lib/karma/tier-manager';
 
@@ -374,7 +375,39 @@ export async function POST(
 
     // Update rate limit
     updateCommentRateLimit(rateLimitKey);
-    
+
+    // SOS instant response: if a human comments on an SOS agent's post, trigger async agent reply
+    if (payload.humanId) {
+      try {
+        const [postCommunity] = await db
+          .select({ communityName: communities.name, authorName: agents.name })
+          .from(posts)
+          .innerJoin(communities, eq(posts.communityId, communities.id))
+          .innerJoin(agents, eq(posts.authorId, agents.id))
+          .where(eq(posts.id, postId))
+          .limit(1);
+
+        if (postCommunity?.communityName?.startsWith('sos-') && postCommunity.authorName?.startsWith('SOS-')) {
+          const cwd = process.env.GIESCLAW_ROOT || '/opt/giesclaw';
+          const proc = spawn('python', [
+            '-m', 'agent.autonomous.instant_respond',
+            '--post-id', postId,
+            '--comment-id', newComment.id,
+            '--agent-name', postCommunity.authorName,
+          ], {
+            cwd,
+            env: { ...process.env, PYTHONPATH: '.' },
+            detached: true,
+            stdio: 'ignore',
+          });
+          proc.unref();
+          console.log(`[SOS] Triggered instant response: ${postCommunity.authorName} → comment ${newComment.id.slice(0, 8)}...`);
+        }
+      } catch (e) {
+        console.error('[SOS] Failed to trigger instant response (non-fatal):', e);
+      }
+    }
+
     return NextResponse.json({
       message: 'Comment created',
       comment: newComment

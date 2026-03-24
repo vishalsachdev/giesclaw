@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { EndorseButton } from './EndorseButton';
 import { CommentForm } from './CommentForm';
 
@@ -14,7 +14,6 @@ const LENS_COLORS: Record<string, string> = {
   'sos-design': 'bg-orange-50 text-orange-700 border-orange-200',
 };
 
-// Short role descriptions for the agent tooltip
 const AGENT_ROLES: Record<string, { role: string; stance: string }> = {
   'SOS-FinBot': { role: 'Institutional Investment Analyst', stance: 'Advocate — builds financial models and ROI cases for AI investment' },
   'SOS-FinCritic': { role: 'Budget Realist', stance: 'Critic — stress-tests ROI assumptions and surfaces hidden costs' },
@@ -67,33 +66,88 @@ function AgentTooltip({ agentName, bio }: { agentName: string; bio?: string }) {
 
 export function PostCard({ post }: { post: any }) {
   const [expanded, setExpanded] = useState(false);
-  const [, setRefreshKey] = useState(0);
+  const [allComments, setAllComments] = useState<any[] | null>(null);
+  const [loadingComments, setLoadingComments] = useState(false);
   const lensColor = LENS_COLORS[post.communityName] || 'bg-gray-50 text-gray-600 border-gray-200';
   const displayAuthor = post.humanAuthorName || post.authorName;
   const isAgent = !post.humanAuthorName;
 
+  // Fetch all comments when expanded
+  useEffect(() => {
+    if (expanded && !allComments) {
+      setLoadingComments(true);
+      fetch(`/api/posts/${post.id}/comments`)
+        .then(res => res.json())
+        .then(data => {
+          const comments = data.comments || data || [];
+          setAllComments(comments);
+          setLoadingComments(false);
+        })
+        .catch(() => setLoadingComments(false));
+    }
+  }, [expanded, allComments, post.id]);
+
+  function refreshComments() {
+    setAllComments(null); // triggers re-fetch on next render
+  }
+
+  // Flatten threaded comments for display
+  function flattenComments(comments: any[], depth = 0): any[] {
+    const result: any[] = [];
+    for (const c of comments) {
+      result.push({ ...c, displayDepth: depth });
+      if (c.replies?.length > 0) {
+        result.push(...flattenComments(c.replies, depth + 1));
+      }
+    }
+    return result;
+  }
+
+  const displayComments = expanded && allComments ? flattenComments(allComments) : [];
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all">
+      {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${lensColor}`}>{post.communityDisplayName}</span>
         <span className="text-sm text-gray-400">{displayAuthor}</span>
         {isAgent && <AgentTooltip agentName={post.authorName} bio={post.authorBio} />}
       </div>
+
+      {/* Title */}
       <h3 className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-orange-600 transition-colors leading-snug"
         onClick={() => setExpanded(!expanded)}>{post.title}</h3>
-      {post.hypothesis && !expanded && (
-        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{post.hypothesis}</p>
+
+      {/* Collapsed: thesis preview */}
+      {!expanded && (
+        <>
+          {post.hypothesis && <p className="text-sm text-gray-500 mt-2 line-clamp-2">{post.hypothesis}</p>}
+          {post.recentComments?.length > 0 && (
+            <div className="mt-3 text-sm text-gray-500">
+              <span className="font-medium text-gray-600">{post.recentComments[0].humanAuthorName || post.recentComments[0].authorName}:</span>
+              <span className="ml-1">{post.recentComments[0].content.slice(0, 120)}...</span>
+            </div>
+          )}
+        </>
       )}
+
+      {/* Expanded: full post + all comments */}
       {expanded && (
         <div className="mt-4 space-y-4">
+          {/* Full content */}
+          <div className="text-base text-gray-700 leading-relaxed whitespace-pre-line">
+            {post.content}
+          </div>
+
+          {/* Structured fields */}
           {post.hypothesis && (
-            <div>
+            <div className="bg-gray-50 rounded-lg p-4">
               <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Thesis</span>
               <p className="text-base text-gray-700 mt-1">{post.hypothesis}</p>
             </div>
           )}
           {post.findings && (
-            <div>
+            <div className="bg-gray-50 rounded-lg p-4">
               <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Findings</span>
               <p className="text-base text-gray-700 mt-1">{post.findings}</p>
             </div>
@@ -106,30 +160,47 @@ export function PostCard({ post }: { post: any }) {
               ))}
             </div>
           )}
-          {post.recentComments && post.recentComments.length > 0 && (
-            <div className="border-t border-gray-100 pt-4 space-y-3">
-              {post.recentComments.map((c: any) => (
-                <div key={c.id} className="text-sm">
-                  <span className="font-medium text-gray-700">{c.humanAuthorName || c.authorName}:</span>
-                  <span className="text-gray-600 ml-1">{c.content.length > 200 ? c.content.slice(0, 200) + '...' : c.content}</span>
-                </div>
-              ))}
-              {post.commentCount > 3 && (
-                <a href={`/post/${post.id}`} className="text-sm text-orange-600 hover:text-orange-500 font-medium">
-                  View all {post.commentCount} comments &rarr;
-                </a>
-              )}
-            </div>
-          )}
-          <CommentForm postId={post.id} onCommentAdded={() => setRefreshKey(k => k + 1)} />
+
+          {/* All comments */}
+          <div className="border-t border-gray-200 pt-4">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">
+              Discussion ({post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'})
+            </h4>
+            {loadingComments && <p className="text-sm text-gray-400">Loading comments...</p>}
+            {displayComments.length > 0 && (
+              <div className="space-y-3">
+                {displayComments.map((c: any) => {
+                  const commentAuthor = c.humanAuthorName || c.authorName;
+                  const isAgentComment = !c.humanAuthorName && c.authorName !== 'human';
+                  return (
+                    <div key={c.id} className="text-sm" style={{ marginLeft: `${Math.min(c.displayDepth, 3) * 20}px` }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="font-medium text-gray-700">{commentAuthor}</span>
+                        {isAgentComment && (
+                          <span className="text-xs text-gray-400 bg-gray-100 px-1 py-0.5 rounded">AI</span>
+                        )}
+                      </div>
+                      <p className="text-gray-600 leading-relaxed">{c.content}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {!loadingComments && displayComments.length === 0 && (
+              <p className="text-sm text-gray-400">No comments yet. Be the first to challenge this finding.</p>
+            )}
+          </div>
+
+          <CommentForm postId={post.id} onCommentAdded={refreshComments} />
         </div>
       )}
+
+      {/* Footer */}
       <div className="flex items-center gap-3 mt-4">
         <EndorseButton postId={post.id} initialCount={post.endorsementCount} initialEndorsed={post.endorsedByCurrentUser ?? false} />
         <button onClick={() => setExpanded(!expanded)} className="text-sm text-gray-400 hover:text-gray-700 transition-colors">
           {expanded ? 'Collapse' : `${post.commentCount} comments`}
         </button>
-        <a href={`/post/${post.id}`} className="text-sm text-gray-300 hover:text-gray-500 ml-auto">Full post &rarr;</a>
       </div>
     </div>
   );

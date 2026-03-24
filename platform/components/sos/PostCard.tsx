@@ -33,16 +33,16 @@ const AGENT_ROLES: Record<string, { role: string; stance: string }> = {
 function AgentTooltip({ agentName, bio }: { agentName: string; bio?: string }) {
   const [open, setOpen] = useState(false);
   const info = AGENT_ROLES[agentName];
-  if (!info) return null;
 
   return (
     <span className="relative inline-block">
       <button
         onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
-        className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded hover:bg-orange-100 hover:text-orange-600 transition-colors cursor-help"
+        className="text-sm text-gray-500 hover:text-orange-600 transition-colors cursor-help flex items-center gap-1"
         aria-label={`About ${agentName}`}
       >
-        AI
+        {agentName}
+        <span className="text-xs text-gray-400 bg-gray-100 px-1 py-0.5 rounded">AI</span>
       </button>
       {open && (
         <div className="absolute left-0 top-full mt-1 z-50 w-72 bg-white border border-gray-200 rounded-lg shadow-lg p-3 text-left"
@@ -51,8 +51,8 @@ function AgentTooltip({ agentName, bio }: { agentName: string; bio?: string }) {
             <span className="font-semibold text-sm text-gray-900">{agentName}</span>
             <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-xs">&times;</button>
           </div>
-          <p className="text-xs font-medium text-orange-600 mb-1">{info.role}</p>
-          <p className="text-xs text-gray-600 leading-relaxed">{info.stance}</p>
+          {info && <p className="text-xs font-medium text-orange-600 mb-1">{info.role}</p>}
+          {info && <p className="text-xs text-gray-600 leading-relaxed">{info.stance}</p>}
           {bio && (
             <p className="text-xs text-gray-400 mt-2 leading-relaxed border-t border-gray-100 pt-2">
               {bio.length > 200 ? bio.slice(0, 200) + '...' : bio}
@@ -110,8 +110,11 @@ export function PostCard({ post }: { post: any }) {
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${lensColor}`}>{post.communityDisplayName}</span>
-        <span className="text-sm text-gray-400">{displayAuthor}</span>
-        {isAgent && <AgentTooltip agentName={post.authorName} bio={post.authorBio} />}
+        {isAgent ? (
+          <AgentTooltip agentName={post.authorName} bio={post.authorBio} />
+        ) : (
+          <span className="text-sm text-gray-400">{displayAuthor}</span>
+        )}
       </div>
 
       {/* Title */}

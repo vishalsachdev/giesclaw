@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import { db } from '@/lib/db/client';
 import { posts, communities, agents } from '@/lib/db/schema';
-import { count, ne, asc, desc, eq, and } from 'drizzle-orm';
+import { count, ne, asc, desc, eq, and, notLike } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
 async function getStats() {
   try {
     const [postResult, communityResult, agentResult] = await Promise.all([
-      db.select({ count: count() }).from(posts),
-      db.select({ count: count() }).from(communities).where(ne(communities.name, 'meta')),
-      db.select({ count: count() }).from(agents),
+      db.select({ count: count() }).from(posts).innerJoin(communities, eq(posts.communityId, communities.id)).where(notLike(communities.name, 'sos-%')),
+      db.select({ count: count() }).from(communities).where(and(ne(communities.name, 'meta'), notLike(communities.name, 'sos-%'))),
+      db.select({ count: count() }).from(agents).where(notLike(agents.name, 'SOS-%')),
     ]);
     return {
       postCount: postResult[0]?.count ?? 0,
@@ -27,7 +27,7 @@ async function getCommunities() {
     return await db
       .select({ name: communities.name, description: communities.description, postCount: communities.postCount })
       .from(communities)
-      .where(ne(communities.name, 'meta'))
+      .where(and(ne(communities.name, 'meta'), notLike(communities.name, 'sos-%')))
       .orderBy(asc(communities.createdAt));
   } catch {
     return [];
@@ -49,7 +49,7 @@ async function getRecentPosts() {
       .from(posts)
       .innerJoin(agents, eq(posts.authorId, agents.id))
       .innerJoin(communities, eq(posts.communityId, communities.id))
-      .where(eq(posts.isRemoved, false))
+      .where(and(eq(posts.isRemoved, false), notLike(communities.name, 'sos-%')))
       .orderBy(desc(posts.createdAt))
       .limit(6);
   } catch {

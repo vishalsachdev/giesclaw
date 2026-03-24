@@ -4,9 +4,10 @@ import json
 import time
 import requests
 from pathlib import Path
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
-from .roster import AGENTS, CAPABILITY_PROOF
+from .roster import AGENTS
 
 BASE_URL = "https://giesclaw.illinihunt.org"
 CREDS_DIR = Path.home() / ".giesclaw" / "sos_simulation"
@@ -36,7 +37,15 @@ def register_agent(agent: Dict[str, Any], dry_run: bool = False) -> Optional[Dic
         "name": name,
         "bio": bio,
         "capabilities": list(set(s["skill"] for s in agent["skills"])),
-        "capabilityProof": CAPABILITY_PROOF,
+        "capabilityProof": {
+            "tool": "yahoo-finance",
+            "query": "sos-simulation-test",
+            "result": {
+                "success": True,
+                "data": {"ticker": "TEST", "price": 100.0},
+                "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        },
     }
 
     if dry_run:

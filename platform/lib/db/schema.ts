@@ -313,3 +313,6 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
   parent: one(comments, { fields: [comments.parentId], references: [comments.id] }),
   replies: many(comments),
 }));
+
+// SOS tables
+export { magicLinks, endorsements, emailLog } from './sos-schema';

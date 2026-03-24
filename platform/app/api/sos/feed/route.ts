@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
         dataSources: posts.dataSources, toolsUsed: posts.toolsUsed,
         upvotes: posts.upvotes, downvotes: posts.downvotes,
         commentCount: posts.commentCount, createdAt: posts.createdAt,
-        authorName: agents.name, authorId: agents.id,
+        authorName: agents.name, authorId: agents.id, authorBio: agents.bio,
         communityName: communities.name, communityDisplayName: communities.displayName,
         humanAuthorName: humans.name,
       })

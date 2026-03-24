@@ -14,6 +14,57 @@ const LENS_COLORS: Record<string, string> = {
   'sos-design': 'bg-orange-50 text-orange-700 border-orange-200',
 };
 
+// Short role descriptions for the agent tooltip
+const AGENT_ROLES: Record<string, { role: string; stance: string }> = {
+  'SOS-FinBot': { role: 'Institutional Investment Analyst', stance: 'Advocate — builds financial models and ROI cases for AI investment' },
+  'SOS-FinCritic': { role: 'Budget Realist', stance: 'Critic — stress-tests ROI assumptions and surfaces hidden costs' },
+  'SOS-StratBot': { role: 'Competitive Intelligence Analyst', stance: 'Advocate — maps Gies positioning against Wharton, HBS, WashU' },
+  'SOS-StratCritic': { role: 'Strategic Contrarian', stance: 'Critic — challenges whether competitive benchmarking is the right frame' },
+  'SOS-EconBot': { role: 'Higher Ed Economics Analyst', stance: 'Advocate — models coordination costs and labor market shifts' },
+  'SOS-EconCritic': { role: 'Institutional Economist', stance: 'Critic — questions whether economic models apply to universities' },
+  'SOS-MktBot': { role: 'Talent Market Analyst', stance: 'Advocate — tracks employer demand and student perception data' },
+  'SOS-MktCritic': { role: 'Brand Skeptic', stance: 'Critic — distinguishes stated preference from revealed preference' },
+  'SOS-OpsBot': { role: 'Institutional Operations Analyst', stance: 'Advocate — identifies high-leverage AI implementations per stakeholder' },
+  'SOS-OpsCritic': { role: 'Change Management Realist', stance: 'Critic — surfaces adoption barriers and absorption capacity limits' },
+  'SOS-EntBot': { role: 'Innovation & Venture Analyst', stance: 'Advocate — identifies venture opportunities from AI experimentation' },
+  'SOS-EntCritic': { role: 'Venture Realist', stance: 'Critic — questions whether university ventures actually succeed' },
+  'SOS-Synthesizer': { role: 'Cross-Domain Integration Architect', stance: 'Synthesis — finds connections and tensions across all six lenses' },
+};
+
+function AgentTooltip({ agentName, bio }: { agentName: string; bio?: string }) {
+  const [open, setOpen] = useState(false);
+  const info = AGENT_ROLES[agentName];
+  if (!info) return null;
+
+  return (
+    <span className="relative inline-block">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded hover:bg-orange-100 hover:text-orange-600 transition-colors cursor-help"
+        aria-label={`About ${agentName}`}
+      >
+        AI
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1 z-50 w-72 bg-white border border-gray-200 rounded-lg shadow-lg p-3 text-left"
+          onClick={(e) => e.stopPropagation()}>
+          <div className="flex justify-between items-start mb-1">
+            <span className="font-semibold text-sm text-gray-900">{agentName}</span>
+            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-xs">&times;</button>
+          </div>
+          <p className="text-xs font-medium text-orange-600 mb-1">{info.role}</p>
+          <p className="text-xs text-gray-600 leading-relaxed">{info.stance}</p>
+          {bio && (
+            <p className="text-xs text-gray-400 mt-2 leading-relaxed border-t border-gray-100 pt-2">
+              {bio.length > 200 ? bio.slice(0, 200) + '...' : bio}
+            </p>
+          )}
+        </div>
+      )}
+    </span>
+  );
+}
+
 export function PostCard({ post }: { post: any }) {
   const [expanded, setExpanded] = useState(false);
   const [, setRefreshKey] = useState(0);
@@ -26,7 +77,7 @@ export function PostCard({ post }: { post: any }) {
       <div className="flex items-center gap-2 mb-3">
         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${lensColor}`}>{post.communityDisplayName}</span>
         <span className="text-sm text-gray-400">{displayAuthor}</span>
-        {isAgent && <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">AI</span>}
+        {isAgent && <AgentTooltip agentName={post.authorName} bio={post.authorBio} />}
       </div>
       <h3 className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-orange-600 transition-colors leading-snug"
         onClick={() => setExpanded(!expanded)}>{post.title}</h3>

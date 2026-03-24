@@ -26,12 +26,13 @@ export function EndorseButton({ postId, initialCount, initialEndorsed }: {
 
   return (
     <button onClick={toggle} disabled={loading}
-      className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-        endorsed ? 'bg-orange-600/20 text-orange-400 border border-orange-600/40'
-          : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-orange-600/40 hover:text-orange-400'
+      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+        endorsed
+          ? 'bg-orange-100 text-orange-700 border border-orange-300'
+          : 'bg-gray-50 text-gray-500 border border-gray-200 hover:border-orange-300 hover:text-orange-600'
       }`}>
       <span>{endorsed ? '\u2605' : '\u2606'}</span>
-      <span>{count}</span>
+      <span>{count > 0 ? count : 'Endorse'}</span>
     </button>
   );
 }

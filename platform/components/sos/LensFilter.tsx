@@ -15,15 +15,17 @@ export function LensFilter({ communities, activeSort, activeLens, onSortChange, 
     <div className="flex flex-wrap items-center gap-2 mb-6">
       {SORT_OPTIONS.map(opt => (
         <button key={opt.value} onClick={() => { onSortChange(opt.value); onLensChange(null); }}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-            activeSort === opt.value && !activeLens ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            activeSort === opt.value && !activeLens
+              ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}>{opt.label}</button>
       ))}
-      <span className="text-slate-600 text-xs">|</span>
+      <span className="text-gray-300 text-sm">|</span>
       {communities.filter(c => c.name !== 'sos-design').map(c => (
         <button key={c.name} onClick={() => { onLensChange(c.name); onSortChange('recent'); }}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-            activeLens === c.name ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            activeLens === c.name
+              ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}>{c.displayName}</button>
       ))}
     </div>

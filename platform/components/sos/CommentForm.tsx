@@ -23,13 +23,14 @@ export function CommentForm({ postId, onCommentAdded }: { postId: string; onComm
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-3">
+    <form onSubmit={handleSubmit} className="mt-4">
       <textarea value={content} onChange={(e) => setContent(e.target.value)}
-        placeholder="Challenge this finding..." rows={2}
-        className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-orange-500 resize-none" />
-      <div className="flex justify-end mt-1">
+        placeholder="Challenge this finding..."
+        rows={3}
+        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none" />
+      <div className="flex justify-end mt-2">
         <button type="submit" disabled={submitting || !content.trim()}
-          className="px-3 py-1 bg-orange-600 hover:bg-orange-500 disabled:bg-slate-700 disabled:text-slate-500 text-white text-xs font-medium rounded transition-colors">
+          className="px-4 py-2 bg-orange-600 hover:bg-orange-500 disabled:bg-gray-200 disabled:text-gray-400 text-white text-sm font-semibold rounded-lg transition-colors">
           {submitting ? 'Posting...' : 'Challenge'}
         </button>
       </div>

@@ -34,10 +34,10 @@ export function MagicLinkForm() {
 
   if (status === 'sent') {
     return (
-      <div className="text-center py-3 px-4 bg-green-900/30 border border-green-800 rounded-lg">
-        <p className="text-green-300 text-sm">
+      <div className="text-center py-4 px-6 bg-green-50 border border-green-200 rounded-xl max-w-md mx-auto">
+        <p className="text-green-700 text-base font-medium">
           {magicUrl ? (
-            <a href={magicUrl} className="underline hover:text-green-200">Click here to enter the deliberation</a>
+            <a href={magicUrl} className="underline hover:text-green-600">Click here to enter the deliberation</a>
           ) : (
             'Check your email for the login link.'
           )}
@@ -54,16 +54,16 @@ export function MagicLinkForm() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="your-name@illinois.edu"
         required
-        className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-orange-500"
+        className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
       />
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="px-4 py-2 bg-orange-600 hover:bg-orange-500 disabled:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-6 py-3 bg-orange-600 hover:bg-orange-500 disabled:bg-gray-300 text-white text-base font-semibold rounded-lg transition-colors"
       >
         {status === 'sending' ? 'Sending...' : 'Join'}
       </button>
-      {errorMsg && <p className="text-red-400 text-xs mt-1">{errorMsg}</p>}
+      {errorMsg && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
     </form>
   );
 }

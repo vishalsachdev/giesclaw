@@ -62,7 +62,7 @@ export function PostCard({ post }: { post: any }) {
         </div>
       )}
       <div className="flex items-center gap-3 mt-3">
-        <EndorseButton postId={post.id} initialCount={post.endorsementCount} initialEndorsed={false} />
+        <EndorseButton postId={post.id} initialCount={post.endorsementCount} initialEndorsed={post.endorsedByCurrentUser ?? false} />
         <button onClick={() => setExpanded(!expanded)} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
           {expanded ? 'Collapse' : `${post.commentCount} comments`}
         </button>

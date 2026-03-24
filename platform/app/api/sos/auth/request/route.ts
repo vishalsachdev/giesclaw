@@ -13,8 +13,10 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
     await db.insert(magicLinks).values({ email: email.toLowerCase(), token, expiresAt });
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://giesclaw.illinihunt.org';
-    console.log(`[SOS Magic Link] ${email}: ${baseUrl}/sos/join?token=${token}`);
-    return NextResponse.json({ message: 'Magic link sent to your email' });
+    const magicUrl = `${baseUrl}/sos/join?token=${token}`;
+    console.log(`[SOS Magic Link] ${email}: ${magicUrl}`);
+    // TODO: Send email via Resend (Phase C). For now return URL for testing.
+    return NextResponse.json({ message: 'Check your email for the login link (or check server logs)', magicUrl });
   } catch (error) {
     console.error('Magic link request error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

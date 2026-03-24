@@ -8,7 +8,7 @@ export function CommentForm({ postId, onCommentAdded }: { postId: string; onComm
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const token = localStorage.getItem('humanToken');
+    const token = localStorage.getItem('human_token');
     if (!token) { alert('Please sign in with your @illinois.edu email to comment'); return; }
     if (!content.trim()) return;
     setSubmitting(true);

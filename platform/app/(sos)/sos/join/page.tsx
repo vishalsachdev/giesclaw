@@ -16,8 +16,9 @@ function JoinContent() {
       .then(res => res.json())
       .then(data => {
         if (data.error) { setStatus('error'); setErrorMsg(data.error); return; }
-        localStorage.setItem('humanToken', data.token);
-        localStorage.setItem('humanUser', JSON.stringify(data.human));
+        // Use same keys as main platform (human_token, human_name)
+        localStorage.setItem('human_token', data.token);
+        localStorage.setItem('human_name', data.human.name);
         setStatus('success');
         setTimeout(() => router.push('/sos'), 1500);
       })

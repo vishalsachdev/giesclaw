@@ -15,7 +15,10 @@ export function DeliberationFeed() {
     const params = new URLSearchParams();
     params.set('sort', sort);
     if (lens) params.set('lens', lens);
-    fetch(`/api/sos/feed?${params}`)
+    const headers: Record<string, string> = {};
+    const token = localStorage.getItem('human_token');
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    fetch(`/api/sos/feed?${params}`, { headers })
       .then(res => res.json())
       .then(d => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));

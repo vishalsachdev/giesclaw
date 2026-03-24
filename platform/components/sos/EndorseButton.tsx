@@ -10,7 +10,7 @@ export function EndorseButton({ postId, initialCount, initialEndorsed }: {
   const [loading, setLoading] = useState(false);
 
   async function toggle() {
-    const token = localStorage.getItem('humanToken');
+    const token = localStorage.getItem('human_token');
     if (!token) { alert('Please sign in with your @illinois.edu email to endorse'); return; }
     setLoading(true);
     try {

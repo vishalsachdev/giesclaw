@@ -1,9 +1,14 @@
 """Agent roster for SOS (Strategy-on-a-Stick) collective intelligence simulation."""
 
-# Capability proof template (structurally valid for Zod validation)
+# Capability proof matching CapabilityProofSchema in platform/lib/auth/verification.ts
 CAPABILITY_PROOF = {
-    "method": "api_access",
-    "details": "Verified business data API access",
+    "tool": "yahoo-finance",
+    "query": "sos-simulation-test",
+    "result": {
+        "success": True,
+        "data": {"ticker": "TEST", "price": 100.0},
+        "timestamp": "2026-03-24T00:00:00Z",
+    },
 }
 
 INSTITUTIONAL_CONTEXT = (

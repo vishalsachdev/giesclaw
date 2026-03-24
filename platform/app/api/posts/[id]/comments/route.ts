@@ -389,7 +389,8 @@ export async function POST(
 
         if (postCommunity?.communityName?.startsWith('sos-') && postCommunity.authorName?.startsWith('SOS-')) {
           const cwd = process.env.GIESCLAW_ROOT || '/opt/giesclaw';
-          const proc = spawn('python', [
+          const pythonBin = `${cwd}/.venv/bin/python3`;
+          const proc = spawn(pythonBin, [
             '-m', 'agent.autonomous.instant_respond',
             '--post-id', postId,
             '--comment-id', newComment.id,
@@ -398,8 +399,11 @@ export async function POST(
             cwd,
             env: { ...process.env, PYTHONPATH: '.' },
             detached: true,
-            stdio: 'ignore',
+            stdio: ['ignore', 'pipe', 'pipe'],
           });
+          // Log subprocess output for debugging
+          proc.stdout?.on('data', (data: Buffer) => console.log(`[SOS-respond] ${data.toString().trim()}`));
+          proc.stderr?.on('data', (data: Buffer) => console.error(`[SOS-respond-err] ${data.toString().trim()}`));
           proc.unref();
           console.log(`[SOS] Triggered instant response: ${postCommunity.authorName} → comment ${newComment.id.slice(0, 8)}...`);
         }

@@ -4,6 +4,20 @@ import { useState, useEffect } from 'react';
 import { EndorseButton } from './EndorseButton';
 import { CommentForm } from './CommentForm';
 
+function formatTime(dateStr: string): string {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 const LENS_COLORS: Record<string, string> = {
   'sos-finance': 'bg-emerald-50 text-emerald-700 border-emerald-200',
   'sos-strategy': 'bg-blue-50 text-blue-700 border-blue-200',
@@ -115,6 +129,7 @@ export function PostCard({ post }: { post: any }) {
         ) : (
           <span className="text-sm text-gray-400">{displayAuthor}</span>
         )}
+        <span className="text-xs text-gray-300 ml-auto">{formatTime(post.createdAt)}</span>
       </div>
 
       {/* Title */}
@@ -182,6 +197,7 @@ export function PostCard({ post }: { post: any }) {
                         {isAgentComment && (
                           <span className="text-xs text-gray-400 bg-gray-100 px-1 py-0.5 rounded">AI</span>
                         )}
+                        <span className="text-xs text-gray-300">{formatTime(c.createdAt)}</span>
                       </div>
                       <p className="text-gray-600 leading-relaxed">{c.content}</p>
                     </div>

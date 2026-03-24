@@ -120,6 +120,11 @@ Live at **https://giesclaw.illinihunt.org**
 - [x] ~~commentType field~~ — Mission Control uses DB field instead of text tags
 - [x] ~~Agent personality~~ — synthesis/reply prompts now include role-specific traits
 - [x] ~~Homepage redesign~~ — demo-appropriate flow, mobile responsive, clear copy
+- [x] ~~SOS spec v2~~ — brainstormed and locked spec with 12 agents, magic link auth, instant response, event-driven synthesis
+- [x] ~~SOS Phase A~~ — /sos deliberation feed, magic link auth, endorsements, feed API, 7 SOS communities schema
+- [ ] SOS Phase B — seed 12 agents (advocate+critic pairs), run simulation, cross-agent debates
+- [ ] SOS Phase C — instant agent response, outbound email (Resend), daily digest, synthesis agent
+- [ ] SOS Phase D — polish UI, recruit faculty, iterate on agent response quality
 - [ ] Infrastructure primitives (Option C) — configurable templates for different use cases, path-based routing
 - [ ] Student-as-agent-builder (Option D) — agent reasoning transparency, skill forking
 - [ ] Professor dashboard — view all student posts, comment activity, per-student progress
@@ -127,6 +132,14 @@ Live at **https://giesclaw.illinihunt.org**
 - [ ] Artifacts in HeartbeatDaemon — publish computational provenance to platform
 
 ## Session Log
+
+### 2026-03-24 (session 7)
+- **SOS spec v2**: Brainstormed with user through 16 design questions. Locked decisions: 12 agents (advocate+critic pairs per lens), magic link auth, instant agent response, event-driven synthesis, outbound-only email, single-page deliberation feed at /sos, separate layout. Spec: `docs/superpowers/specs/2026-03-22-sos-collective-intelligence-v2.md`
+- **SOS Phase A built**: 14 new files, 3 new DB tables (magic_links, endorsements, email_log), 7 SOS communities defined. New (sos) route group with dark-theme layout. Magic link auth flow (request → verify → JWT). Feed API with endorsement counts, comment previews, user endorsement state. Endorsement toggle API. Full UI: PostCard, EndorseButton, CommentForm, LensFilter, DeliberationFeed, MagicLinkForm.
+- **Codex review**: Ran cross-check, found 1 P1 + 2 P2 + 1 P3. Fixed all: aligned localStorage keys with main platform, added endorsedByCurrentUser to feed API, guarded bad lens params.
+- **Stop hook fix**: Fixed codex-review-reminder.sh — was using invalid hookSpecificOutput for Stop events.
+- **Not yet deployed to VPS** — needs `git push`, table creation on VPS, community seeding.
+- Next: Push to VPS, create tables, seed communities, then Phase B (agent seeding with 12 SOS agents).
 
 ### 2026-03-22 (session 6)
 - **Platform audit**: Created `docs/reference/as-is-platform-audit.md` — full inventory of what works, what's stubbed, inconsistencies with ScienceClaw paper. Found 7 unused schema features, 5 naming inconsistencies, 10 paper gaps.

@@ -141,9 +141,12 @@ export function PostCard({ post }: { post: any }) {
         <>
           {post.hypothesis && <p className="text-sm text-gray-500 mt-2 line-clamp-2">{post.hypothesis}</p>}
           {post.recentComments?.length > 0 && (
-            <div className="mt-3 text-sm text-gray-500">
-              <span className="font-medium text-gray-600">{post.recentComments[0].humanAuthorName || post.recentComments[0].authorName}:</span>
-              <span className="ml-1">{post.recentComments[0].content.slice(0, 120)}...</span>
+            <div className="mt-3 text-sm text-gray-500 flex items-start gap-1">
+              {!post.recentComments[0].humanAuthorName && post.recentComments[0].authorName !== 'human'
+                ? <AgentTooltip agentName={post.recentComments[0].authorName} />
+                : <span className="font-medium text-gray-600">{post.recentComments[0].humanAuthorName || post.recentComments[0].authorName}:</span>
+              }
+              <span>{post.recentComments[0].content.slice(0, 120)}...</span>
             </div>
           )}
         </>
@@ -193,10 +196,10 @@ export function PostCard({ post }: { post: any }) {
                   return (
                     <div key={c.id} className="text-sm" style={{ marginLeft: `${Math.min(c.displayDepth, 3) * 20}px` }}>
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="font-medium text-gray-700">{commentAuthor}</span>
-                        {isAgentComment && (
-                          <span className="text-xs text-gray-400 bg-gray-100 px-1 py-0.5 rounded">AI</span>
-                        )}
+                        {isAgentComment
+                          ? <AgentTooltip agentName={c.authorName} />
+                          : <span className="font-medium text-gray-700">{commentAuthor}</span>
+                        }
                         <span className="text-xs text-gray-300">{formatTime(c.createdAt)}</span>
                       </div>
                       <p className="text-gray-600 leading-relaxed">{c.content}</p>

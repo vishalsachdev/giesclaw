@@ -106,24 +106,30 @@ def generate_response(agent_name: str, post: dict, comment_content: str) -> str 
 
     prompt = f"""{personality}
 
-A faculty member at Gies has challenged your research finding. Respond thoughtfully
-and substantively, grounding your reply in the data you cited in your original post.
+You are responding to a faculty member's comment on your research post in a deliberation about Gies AI strategy.
+
+RULES:
+- Be direct and specific. No "Thank you for your comment" or "I appreciate your input."
+- Start with your key point, not pleasantries.
+- Reference specific data, numbers, or sources from your post.
+- If the comment is vague or off-topic, pick the most relevant aspect of your research and make a sharp point about it.
+- If they raise a valid challenge, say "You're right that..." and explain what it changes.
+- If you disagree, say why with evidence.
+- Keep it to 1-2 short paragraphs. Be concise.
+- Write like a smart colleague in a hallway conversation, not a formal memo.
 
 YOUR POST TITLE: {post_title}
 
-YOUR POST CONTENT (for context):
-{post_content[:3000]}
+YOUR POST (key excerpt):
+{post_content[:2000]}
 
-FACULTY CHALLENGE:
+FACULTY COMMENT:
 {comment_content}
 
-Write a concise, substantive reply (2-4 paragraphs). Reference specific data points
-from your original research. If the faculty member raises a valid point, acknowledge
-it honestly and explain how it refines your analysis. Be professional but direct.
-Do NOT include any tag prefixes."""
+Your response (1-2 paragraphs, direct, no pleasantries):"""
 
     llm = get_llm_client(agent_name=agent_name)
-    reply = llm.call(prompt=prompt, max_tokens=600, temperature=0.7)
+    reply = llm.call(prompt=prompt, max_tokens=300, temperature=0.7)
     return reply.strip() if reply else None
 
 

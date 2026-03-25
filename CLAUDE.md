@@ -122,8 +122,9 @@ Live at **https://giesclaw.illinihunt.org**
 - [x] ~~Homepage redesign~~ — demo-appropriate flow, mobile responsive, clear copy
 - [x] ~~SOS spec v2~~ — brainstormed and locked spec with 12 agents, magic link auth, instant response, event-driven synthesis
 - [x] ~~SOS Phase A~~ — /sos deliberation feed, magic link auth, endorsements, feed API, 7 SOS communities schema
-- [ ] SOS Phase B — seed 12 agents (advocate+critic pairs), run simulation, cross-agent debates
-- [ ] SOS Phase C — instant agent response, outbound email (Resend), daily digest, synthesis agent
+- [x] ~~SOS Phase B~~ — 13 agents registered, 13 posts published, 12 cross-agent debate comments seeded
+- [x] ~~SOS Phase C (partial)~~ — instant agent response on human comments, Resend email for magic links, agent response prompt tuned
+- [ ] SOS Phase C (remaining) — daily digest cron, synthesis agent event trigger, agent response email notifications
 - [ ] SOS Phase D — polish UI, recruit faculty, iterate on agent response quality
 - [ ] Infrastructure primitives (Option C) — configurable templates for different use cases, path-based routing
 - [ ] Student-as-agent-builder (Option D) — agent reasoning transparency, skill forking
@@ -133,13 +134,15 @@ Live at **https://giesclaw.illinihunt.org**
 
 ## Session Log
 
-### 2026-03-24 (session 7)
-- **SOS spec v2**: Brainstormed with user through 16 design questions. Locked decisions: 12 agents (advocate+critic pairs per lens), magic link auth, instant agent response, event-driven synthesis, outbound-only email, single-page deliberation feed at /sos, separate layout. Spec: `docs/superpowers/specs/2026-03-22-sos-collective-intelligence-v2.md`
-- **SOS Phase A built**: 14 new files, 3 new DB tables (magic_links, endorsements, email_log), 7 SOS communities defined. New (sos) route group with dark-theme layout. Magic link auth flow (request → verify → JWT). Feed API with endorsement counts, comment previews, user endorsement state. Endorsement toggle API. Full UI: PostCard, EndorseButton, CommentForm, LensFilter, DeliberationFeed, MagicLinkForm.
-- **Codex review**: Ran cross-check, found 1 P1 + 2 P2 + 1 P3. Fixed all: aligned localStorage keys with main platform, added endorsedByCurrentUser to feed API, guarded bad lens params.
-- **Stop hook fix**: Fixed codex-review-reminder.sh — was using invalid hookSpecificOutput for Stop events.
-- **Not yet deployed to VPS** — needs `git push`, table creation on VPS, community seeding.
-- Next: Push to VPS, create tables, seed communities, then Phase B (agent seeding with 12 SOS agents).
+### 2026-03-24 (sessions 7+8)
+- **SOS spec v2** (session 7): Brainstormed through 16 design questions. Locked: 12 agents (advocate+critic pairs), magic link auth, instant response, event-driven synthesis, outbound-only email, single-page deliberation feed at /sos. Spec: `docs/superpowers/specs/2026-03-22-sos-collective-intelligence-v2.md`
+- **Phase A**: 14 new files, 3 DB tables (magic_links, endorsements, email_log), (sos) route group with separate layout. Magic link auth, feed API, endorsement toggle, full UI components. Codex review: fixed all P1/P2 findings.
+- **Phase B**: 13 SOS agents registered (6 advocate-critic pairs + synthesizer), 13 posts published via real skill executions (FRED, SEC, Google Trends, etc.), 12 cross-agent debate comments seeded.
+- **Phase C (partial)**: Instant agent response — human comment triggers Python subprocess that generates LLM reply in ~30-60s. Resend email integrated for magic link delivery (illinihunt.org verified domain). Agent response prompt tuned for direct, data-grounded replies.
+- **UI polish**: White background (replaced dark theme), bigger fonts, faculty explainer section, agent personality tooltips on all agent names, timestamps on posts/comments, self-contained post cards (no links to main giesclaw), auth-gated comment form + endorse button, homepage isolation (no SOS content leak).
+- **Fixes**: VPS table permissions, agent probation→active, correct python3 venv path for subprocess spawn.
+- **RESEND_API_KEY exposed in conversation** — user needs to rotate it in Resend dashboard and re-run `bash bin/setup-resend-key.sh`.
+- Next: Rotate Resend key, daily digest cron, synthesis agent trigger, agent response email notifications, recruit faculty.
 
 ### 2026-03-22 (session 6)
 - **Platform audit**: Created `docs/reference/as-is-platform-audit.md` — full inventory of what works, what's stubbed, inconsistencies with ScienceClaw paper. Found 7 unused schema features, 5 naming inconsistencies, 10 paper gaps.

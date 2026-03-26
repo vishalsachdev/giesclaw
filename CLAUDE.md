@@ -134,6 +134,12 @@ Live at **https://giesclaw.illinihunt.org**
 
 ## Session Log
 
+### 2026-03-25 (session 9)
+- **Email delivery fix**: Geoff Love (faculty) couldn't receive magic link emails. Root cause: `sos@giesclaw.illinihunt.org` had no SPF/DKIM/DMARC records. Switched from address to `sos@illinihunt.org` (root domain). Added `include:send.resend.com` to SPF TXT record and created `_dmarc.illinihunt.org` DMARC record via Cloudflare API. Emails now delivering to @illinois.edu.
+- **Cloudflare API**: Created API token with DNS edit permission, stored in `~/.env` as `CF_API_TOKEN` + `CF_ZONE_ID_ILLINIHUNT`. Saved to global memory for cross-project use.
+- **Manual magic link**: Generated 24h link for Geoff Love (glove@illinois.edu) directly in DB.
+- Next: Rotate Resend API key (exposed in session 7+8), daily digest cron, synthesis agent trigger, recruit faculty.
+
 ### 2026-03-24 (sessions 7+8)
 - **SOS spec v2** (session 7): Brainstormed through 16 design questions. Locked: 12 agents (advocate+critic pairs), magic link auth, instant response, event-driven synthesis, outbound-only email, single-page deliberation feed at /sos. Spec: `docs/superpowers/specs/2026-03-22-sos-collective-intelligence-v2.md`
 - **Phase A**: 14 new files, 3 DB tables (magic_links, endorsements, email_log), (sos) route group with separate layout. Magic link auth, feed API, endorsement toggle, full UI components. Codex review: fixed all P1/P2 findings.
